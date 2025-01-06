@@ -1,11 +1,27 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import { getTeamMembers, getOffers, getPages } from '../lib/API';
+import Base from '../layouts/Base.astro';
+import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
+
+const teamMembers = await getTeamMembers();
+// console.log(teamMembers);
+const offers = await getOffers();
+console.log(offers);
+const pages = await getPages();
+// console.log(pages);
+
 ---
 
-<Layout>
-	<Welcome />
-</Layout>
+<Base>
+	<main>
+		{teamMembers.map((item) => (
+			<section>
+      <h2>{item.fields.name}</h2>
+      <article set:html={documentToHtmlString(item.fields.info)}></article>
+    </section>
+		))}
+	</main>
+
+
+</Base>
