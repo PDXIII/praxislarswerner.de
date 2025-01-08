@@ -1,14 +1,15 @@
 ---
 
 import { getTeamMembers, getOffers, getPages } from '../lib/API';
+import type { TeamMember, Offer, Page } from '../lib/types';
 import Base from '../layouts/Base.astro';
 import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
 
-const teamMembers = await getTeamMembers();
+const teamMembers: TeamMember[] = await getTeamMembers();
 // console.log(teamMembers);
-const offers = await getOffers();
+const offers: Offer[] = await getOffers();
 console.log(offers);
-const pages = await getPages();
+const pages: Page[] = await getPages();
 // console.log(pages);
 
 ---
@@ -18,7 +19,9 @@ const pages = await getPages();
 		{teamMembers.map((item) => (
 			<section>
       <h2>{item.fields.name}</h2>
-      <article set:html={documentToHtmlString(item.fields.info)}></article>
+      <article set:html={documentToHtmlString(item.fields.info)}>
+		<img src={item.fields.image.fields.file.url} alt={item.fields.image.fields.description}>
+	  </article>
     </section>
 		))}
 	</main>
