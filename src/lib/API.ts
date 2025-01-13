@@ -86,6 +86,7 @@ export const getTeamMembers = async () => {
   const entries = await contentfulClient.getEntries<CFTeamMember>({
     content_type: "teamMember",
   });
+
   const members: TeamMember[] = entries.items.map((item: CFTeamMember) => {
     const member: TeamMember = {
       contentTypeId: item.sys.contentType.sys.id,
@@ -107,7 +108,29 @@ export const getOffers = async () => {
   const entries = await contentfulClient.getEntries<CFOffer>({
     content_type: "offer",
   });
-  return entries.items;
+  
+  const offers : Offer[] = entries.items.map((item: CFOffer) => {
+
+    console.log(item.fields);
+    const offer: Offer = {
+      contentTypeId: item.sys.contentType.sys.id,
+      slug: slug(item.fields.name),
+      name: item.fields.name,
+      intro: item.fields.intro,
+      text: item.fields.text,
+      image: {
+        url: item.fields.image.fields.file.url,
+        description: item.fields.image.fields.description,
+      },
+      // logo: {
+      //   url: item.fields.logoDachverband.fields.file.url,
+      //   description: item.fields.logoDachverband.fields.description,
+      // },
+      // url: item.fields.urlDachverband,
+    }
+    return offer;
+  });
+  return offers;
 };
 export const getPages = async () => {
   const entries = await contentfulClient.getEntries<CFPage>({

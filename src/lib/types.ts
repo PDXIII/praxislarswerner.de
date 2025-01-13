@@ -5,7 +5,7 @@ export type TeamMember = {
   slug: string,
   name: string,
   title: string,
-  info: object,
+  info: any,
   image: {
     url: string,
     description: string
@@ -14,7 +14,8 @@ export type TeamMember = {
 
 export type Offer = {
   contentTypeId: "offer",
-  name: string
+  slug: string,
+  name: string,
   intro: object,
   text: object,
   image?: {
@@ -33,6 +34,7 @@ export type Offer = {
 
 export type Page = {
   contentTypeId: "page",
+  slug: string,
   name: string,
   text: object,
   info: object,
@@ -51,6 +53,7 @@ export type Config = {
 
 export type LandingPage = {
   contentTypeId: "landingPage",
+  slug: string,
   name: string,
   introText: object,
   contactText: object,

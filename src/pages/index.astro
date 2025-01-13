@@ -1,12 +1,13 @@
 ---
 
-import { getTeamMembers } from '../lib/API';
-import type { TeamMember } from '../lib/types';
+import { getTeamMembers, getOffers } from '../lib/API';
+import type { TeamMember, Offer } from '../lib/types';
 import Base from '../layouts/Base.astro';
 import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
 
 const teamMembers: TeamMember[] = await getTeamMembers();
-console.log(teamMembers);
+
+const offers: Offer[] = await getOffers();
 ---
 
 <Base>
@@ -17,12 +18,27 @@ console.log(teamMembers);
 			<a href={`/team/${item.slug}`}>
 				<article>
 					<h2 set:html={item.name} />
-					<img src={item.image.url} alt={item.image.description}>
+					<img src={item.image.url} alt={item.image.description} />
 				</article>
 			</a>
 				)
 			)}
 		</section>
 		<!-- END TEAM -->
+		<!-- ANGEBOT -->
+		<section>
+			{offers.map((item) => (
+				<a href={`/angebot/${item.slug}`}>
+					<article>
+						<h2 set:html={item.name} />
+						{item.image && <img src={item.image.url} alt={item.image.description} />}
+
+						<div set:html={documentToHtmlString(item.intro)} />
+					</article>
+				</a>
+			))}
+		</section>
+		<!-- END ANGEBOT -->
+
 	</main>
 </Base>
