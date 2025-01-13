@@ -1,51 +1,57 @@
-import type { EntryFieldTypes } from "contentful";
+
 
 export type TeamMember = {
   contentTypeId: "teamMember",
-  fields: {
-    name: EntryFieldTypes.Text,
-    title: EntryFieldTypes.Text,
-    info: EntryFieldTypes.RichText,
-    image: {
-        fields: {
-            description: EntryFieldTypes.Text, 
-            file: { 
-                url: EntryFieldTypes.Text
-            }
-        }
-    }
-  }
+  slug: string,
+  name: string,
+  title: string,
+  info: object,
+  image: {
+    url: string,
+    description: string
+  },
 }
 
 export type Offer = {
   contentTypeId: "offer",
-  fields: {
-    name: EntryFieldTypes.Text,
-    intro: EntryFieldTypes.RichText,
-    text: EntryFieldTypes.RichText,
-    image?: {
-        fields: { 
-         file: { 
-           url: EntryFieldTypes.Text
-         }
-       }
-     }
+  name: string
+  intro: object,
+  text: object,
+  image?: {
+    url: string,
+    description?: string
+  }
+  logo?: {
+    url: string,
+    description?: string,
+  }
+  link?: {
+    url: string,
   }
 }
+
 
 export type Page = {
   contentTypeId: "page",
-  fields: {
-    name: EntryFieldTypes.Text,
-    text: EntryFieldTypes.Text,
-    info: EntryFieldTypes.RichText,
-    image?: {
-        fields: { 
-         file: { 
-           url: EntryFieldTypes.Text
-         }
-       }
-     }
-  }
+  name: string,
+  text: object,
+  info: object,
+  image?: {
+    url: string,
+    description: string,
+  },
 }
 
+
+export type Config = {
+  contentTypeId: "config",
+  name: string,
+  data: object,
+}
+
+export type LandingPage = {
+  contentTypeId: "landingPage",
+  name: string,
+  introText: object,
+  contactText: object,
+}

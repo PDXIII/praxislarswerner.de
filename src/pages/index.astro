@@ -1,30 +1,28 @@
 ---
 
-import { getTeamMembers, getOffers, getPages } from '../lib/API';
-import type { TeamMember, Offer, Page } from '../lib/types';
+import { getTeamMembers } from '../lib/API';
+import type { TeamMember } from '../lib/types';
 import Base from '../layouts/Base.astro';
 import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
 
 const teamMembers: TeamMember[] = await getTeamMembers();
-// console.log(teamMembers);
-const offers: Offer[] = await getOffers();
-console.log(offers);
-const pages: Page[] = await getPages();
-// console.log(pages);
-
+console.log(teamMembers);
 ---
 
 <Base>
 	<main>
+		<!-- TEAM -->
+		<section>
 		{teamMembers.map((item) => (
-			<section>
-      <h2>{item.fields.name}</h2>
-      <article set:html={documentToHtmlString(item.fields.info)}>
-		<img src={item.fields.image.fields.file.url} alt={item.fields.image.fields.description}>
-	  </article>
-    </section>
-		))}
+			<a href={`/team/${item.slug}`}>
+				<article>
+					<h2 set:html={item.name} />
+					<img src={item.image.url} alt={item.image.description}>
+				</article>
+			</a>
+				)
+			)}
+		</section>
+		<!-- END TEAM -->
 	</main>
-
-
 </Base>
