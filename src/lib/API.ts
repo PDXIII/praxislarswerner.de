@@ -114,7 +114,6 @@ export const getOffers = async () => {
   
   const offers : Offer[] = entries.items.map((item: CFOffer) => {
 
-    console.log(item.fields);
     const offer: Offer = {
       contentTypeId: item.sys.contentType.sys.id,
       params: { slug: slug(item.fields.name) },
