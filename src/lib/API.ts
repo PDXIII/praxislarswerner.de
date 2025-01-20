@@ -15,7 +15,7 @@ interface CFTeamMember {
     name: EntryFieldTypes.Text;
     title: EntryFieldTypes.Text;
     info: EntryFieldTypes.RichText;
-    image: {
+    image?: {
       fields: {
         description: EntryFieldTypes.Text;
         file: {
@@ -90,13 +90,16 @@ export const getTeamMembers = async () => {
   const members: TeamMember[] = entries.items.map((item: CFTeamMember) => {
     const member: TeamMember = {
       contentTypeId: item.sys.contentType.sys.id,
-      slug: slug(item.fields.name),
-      name: item.fields.name,
-      title: item.fields.title,
-      info: item.fields.info,
-      image: {
-        url: item.fields.image.fields.file.url,
-        description: item.fields.image.fields.description,
+      params: { slug: slug(item.fields.name) },
+      props: { 
+        slug: slug(item.fields.name),
+        name: item.fields.name,
+        title: item.fields.title,
+        info: item.fields.info,
+        image: {
+          url: item.fields.image.fields.file.url,
+          description: item.fields.image.fields.description,
+        }
       }
     }
     return member;
@@ -114,19 +117,23 @@ export const getOffers = async () => {
     console.log(item.fields);
     const offer: Offer = {
       contentTypeId: item.sys.contentType.sys.id,
-      slug: slug(item.fields.name),
-      name: item.fields.name,
-      intro: item.fields.intro,
-      text: item.fields.text,
-      image: {
-        url: item.fields.image.fields.file.url,
-        description: item.fields.image.fields.description,
-      },
-      // logo: {
-      //   url: item.fields.logoDachverband.fields.file.url,
+      params: { slug: slug(item.fields.name) },
+      props: {
+        
+        slug: slug(item.fields.name),
+        name: item.fields.name,
+        intro: item.fields.intro,
+        text: item.fields.text,
+        image: {
+          url: item.fields.image.fields.file.url,
+          description: item.fields.image.fields.description,
+        },
+        // logo: {
+          //   url: item.fields.logoDachverband.fields.file.url,
       //   description: item.fields.logoDachverband.fields.description,
       // },
       // url: item.fields.urlDachverband,
+    }
     }
     return offer;
   });

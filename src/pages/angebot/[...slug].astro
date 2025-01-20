@@ -1,24 +1,13 @@
 ---
 import { getOffers } from "../../lib/API";
 import type { Offer } from "../../lib/types";
-import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
 import Base from "../../layouts/Base.astro";
+import PageHeader from "../../components/PageHeader.astro";
+import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
 
 export async function getStaticPaths() {
     const offers: Offer[] = await getOffers();
-    return offers.map((item) => ({
-        params: {slug:item.slug},
-        props: {
-            slug: item.slug,
-            name: item.name, 
-            intro: item.intro,
-            text: item.text, 
-            image: {
-                url: item.image.url, 
-                description: item.image.description
-            },
-        }
-    }));
+    return offers;
 }
 
 const { slug } = Astro.params;
@@ -29,10 +18,9 @@ const { name, intro, text, image } = Astro.props;
 <Base>
     <main>
         <article>
-            <h1>{name}</h1>
-            <div set:html={documentToHtmlString(intro)} />
-            <div set:html={documentToHtmlString(text)} />
-            <img src={image.url} alt={image.description} />
+            <PageHeader name={name} image={image} />
+
+            <div class="prose" set:html={documentToHtmlString(text)} />
         </article>
     </main>
 </Base>

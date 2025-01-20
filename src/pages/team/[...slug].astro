@@ -2,23 +2,12 @@
 import { getTeamMembers } from "../../lib/API";
 import type { TeamMember } from "../../lib/types";
 import Base from "../../layouts/Base.astro";
+import PageHeader from "../../components/PageHeader.astro";
 import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
 
 export async function getStaticPaths() {
     const teamMembers: TeamMember[] = await getTeamMembers();
-    return teamMembers.map((item) => ({
-        params: {slug:item.slug},
-        props: {
-            slug: item.slug,
-            name: item.name, 
-            title: item.title, 
-            info: item.info, 
-            image: {
-                url: item.image.url, 
-                description: item.image.description
-            },
-        }
-    }));
+    return teamMembers;
 }
 
 const { slug } = Astro.params;
@@ -28,10 +17,8 @@ const { name, title, info, image } = Astro.props;
 <Base>
     <main>
         <article>
-            <h1>{name}</h1>
-            <h2>{title}</h2>
-            <img src={image.url} alt={slug}>
-            <p set:html={documentToHtmlString(info)} />
+            <PageHeader name={name} title?={title} image={image} />
+            <div class="prose" set:html={documentToHtmlString(info)} />
         </article>
     </main>
 </Base>

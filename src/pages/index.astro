@@ -15,10 +15,10 @@ const offers: Offer[] = await getOffers();
 		<!-- TEAM -->
 		<section>
 		{teamMembers.map((item) => (
-			<a href={`/team/${item.slug}`}>
+			<a href={`/team/${item.props.slug}`}>
 				<article>
-					<h2 set:html={item.name} />
-					<img src={item.image.url} alt={item.image.description} />
+					<h2 set:html={item.props.name} />
+					<img src={item.props.image.url} alt={item.props.image.description} />
 				</article>
 			</a>
 				)
@@ -28,12 +28,12 @@ const offers: Offer[] = await getOffers();
 		<!-- ANGEBOT -->
 		<section>
 			{offers.map((item) => (
-				<a href={`/angebot/${item.slug}`}>
+				<a href={`/angebot/${item.props.slug}`}>
 					<article>
-						<h2 set:html={item.name} />
-						{item.image && <img src={item.image.url} alt={item.image.description} />}
+						<h2 set:html={item.props.name} />
+						{item.props.image && <img src={item.props.image.url} alt={item.props.image.description} />}
 
-						<div set:html={documentToHtmlString(item.intro)} />
+						<div set:html={documentToHtmlString(item.props.intro)} />
 					</article>
 				</a>
 			))}
