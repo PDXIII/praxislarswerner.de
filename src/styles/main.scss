@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  @import "fontface";
+}
+
+@layer utilities {
+  .font-primary {
+    &.font-light,
+    .font-light {
+      font-family: "HalisRoundedExtraLight";
+      font-weight: 200;
+    }
+    &.font-medium,
+    .font-medium {
+      font-family: "HalisRounded";
+      font-weight: 300;
+    }
+    &.font-bold,
+    .font-bold {
+      font-family: "HalisRoundedBold";
+      font-weight: 700;
+    }
+  }
+
+  .font-smallCaps {
+    &.font-light,
+    .font-light {
+      font-family: "HalisRoundedSCExtraLight";
+      font-weight: 200;
+    }
+    &.font-medium,
+    .font-medium {
+      font-family: "HalisRoundedSCRegular";
+      font-weight: 300;
+    }
+    &.font-bold,
+    .font-medium {
+      font-family: "HalisRoundedSCBold";
+      font-weight: 700;
+    }
+  }
+}

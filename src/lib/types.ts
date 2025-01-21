@@ -21,8 +21,8 @@ export type Offer = {
   props: {
     slug: string,
     name: string,
-    intro: object,
-    text: object,
+    intro: any,
+    text: any,
     image?: {
       url: string,
       description?: string
@@ -44,8 +44,8 @@ export type Page = {
   props: {
     slug: string,
     name: string,
-    text: object,
-    info: object,
+    text: any,
+    info: any,
     image?: {
       url: string,
      description: string,
@@ -57,7 +57,7 @@ export type Page = {
 export type Config = {
   contentTypeId: "config",
   name: string,
-  data: object,
+  data: any,
 }
 
 export type LandingPage = {
@@ -66,7 +66,7 @@ export type LandingPage = {
   props: {
     slug: string,
     name: string,
-    introText: object,
-    contactText: object,
+    introText: any,
+    contactText: any,
   }
 }

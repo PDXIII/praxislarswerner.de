@@ -1,0 +1,99 @@
+/**
+ * @license
+ * MyFonts Webfont Build ID 3867246, 2020-12-16T11:57:38-0500
+ * 
+ * The fonts listed in this notice are subject to the End User License
+ * Agreement(s) entered into by the website owner. All other parties are 
+ * explicitly restricted from using the Licensed Webfonts(s).
+ * 
+ * You may obtain a valid license at the URLs below.
+ * 
+ * Webfont: Halis Rounded Bold by MyFonts
+ * URL: https://www.myfonts.com/collections/ahmet-altun-foundry
+
+ * Webfont: Halis Rounded Light by MyFonts
+ * URL: https://www.myfonts.com/collections/ahmet-altun-foundry
+
+ * Webfont: Halis Rounded ExtraLight by MyFonts
+ * URL: https://www.myfonts.com/collections/ahmet-altun-foundry
+
+ * Webfont: Halis Rounded by MyFonts
+ * URL: https://www.myfonts.com/collections/ahmet-altun-foundry
+
+ * Webfont: Halis Rounded SC Bold by MyFonts
+ * URL: https://www.myfonts.com/collections/ahmet-altun-foundry
+
+ * Webfont: Halis Rounded SC ExtraLight by MyFonts
+ * URL: https://www.myfonts.com/collections/ahmet-altun-foundry
+
+ * Webfont: Halis Rounded SC Light by MyFonts
+ * URL: https://www.myfonts.com/collections/ahmet-altun-foundry
+
+ * Webfont: Halis Rounded SC Regular by MyFonts
+ * URL: https://www.myfonts.com/collections/ahmet-altun-foundry
+ 
+ * © 2025 MyFonts Inc. */
+
+@font-face {
+  font-family: "HalisRoundedExtraLight";
+  weight: 200;
+  src: url("/fonts/HalisRoundedExtraLight/font.woff2") format("woff2"),
+    url("/fonts/HalisRoundedExtraLight/font.woff") format("woff");
+}
+
+@font-face {
+  font-family: "HalisRoundedSCExtraLight";
+  weight: 200;
+  font-variant: small-caps;
+  font-variant: common-ligatures small-caps;
+  src: url("/fonts/HalisRoundedSCExtraLight/font.woff2") format("woff2"),
+    url("/fonts/HalisRoundedSCExtraLight/font.woff") format("woff");
+}
+
+@font-face {
+  font-family: "HalisRoundedLight";
+  weight: 300;
+  src: url("/fonts/HalisRoundedLight/font.woff2") format("woff2"),
+    url("/fonts/HalisRoundedLight/font.woff") format("woff");
+}
+
+@font-face {
+  font-family: "HalisRoundedSCLight";
+  weight: 300;
+  font-variant: small-caps;
+  font-variant: common-ligatures small-caps;
+  src: url("/fonts/HalisRoundedSCLight/font.woff2") format("woff2"),
+    url("/fonts/HalisRoundedSCLight/font.woff") format("woff");
+}
+
+@font-face {
+  font-family: "HalisRounded";
+  weight: 400;
+  src: url("/fonts/HalisRounded/font.woff2") format("woff2"),
+    url("/fonts/HalisRounded/font.woff") format("woff");
+}
+
+@font-face {
+  font-family: "HalisRoundedSCRegular";
+  weight: 400;
+  font-variant: small-caps;
+  font-variant: common-ligatures small-caps;
+  src: url("/fonts/HalisRoundedSCRegular/font.woff2") format("woff2"),
+    url("/fonts/HalisRoundedSCRegular/font.woff") format("woff");
+}
+
+@font-face {
+  font-family: "HalisRoundedBold";
+  weight: 700;
+  src: url("/fonts/HalisRoundedBold/font.woff2") format("woff2"),
+    url("/fonts/HalisRoundedBold/font.woff") format("woff");
+}
+
+@font-face {
+  font-family: "HalisRoundedSCBold";
+  weight: 700;
+  font-variant: small-caps;
+  font-variant: common-ligatures small-caps;
+  src: url("/fonts/HalisRoundedSCBold/font.woff2") format("woff2"),
+    url("/fonts/HalisRoundedSCBold/font.woff") format("woff");
+}
