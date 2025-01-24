@@ -13,8 +13,32 @@ export default {
 				primary: [
 					'HalisRoundedLight', ...defaultTheme.fontFamily.sans,
 				],
+				primaryExtraLight: [
+					'HalisRoundedExtraLight',
+					...defaultTheme.fontFamily.sans,
+				],
+				primaryLight: [
+					'HalisRoundedLight',
+					...defaultTheme.fontFamily.sans,
+				],
+				primaryBold: [
+					'HalisRoundedBold',
+					...defaultTheme.fontFamily.sans,
+				],
 				smallCaps: [
 					'HalisRoundedSCLight',
+					...defaultTheme.fontFamily.sans,
+				],
+				smallCapsExtraLight: [
+					'HalisRoundedSCExtraLight',
+					...defaultTheme.fontFamily.sans,
+				],
+				smallCapsLight: [
+					'HalisRoundedSCLight',
+					...defaultTheme.fontFamily.sans,
+				],
+				smallCapsBold: [
+					'HalisRoundedSCBold',
 					...defaultTheme.fontFamily.sans,
 				],
 			},

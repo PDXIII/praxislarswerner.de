@@ -1,0 +1,16 @@
+---
+import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
+
+interface Props {
+  content: any;
+  class?: string;
+}
+
+const { content, class: classList } = Astro.props;
+const renderedHTML = documentToHtmlString(content);
+---
+
+<div
+  set:html={renderedHTML}
+  class={`mx-auto mt-16 prose  ${classList || ""}`}
+/>

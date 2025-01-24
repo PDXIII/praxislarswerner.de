@@ -15,6 +15,7 @@ interface CFTeamMember {
     name: EntryFieldTypes.Text;
     title: EntryFieldTypes.Text;
     info: EntryFieldTypes.RichText;
+    offer: EntryFieldTypes.Array<string>;
     image?: {
       fields: {
         description: EntryFieldTypes.Text;
@@ -82,6 +83,7 @@ interface CFLandingPage {
     contactText: EntryFieldTypes.RichText;
   };
 }
+
 export const getTeamMembers = async () => {
   const entries = await contentfulClient.getEntries<CFTeamMember>({
     content_type: "teamMember",
@@ -91,53 +93,64 @@ export const getTeamMembers = async () => {
     const member: TeamMember = {
       contentTypeId: item.sys.contentType.sys.id,
       params: { slug: slug(item.fields.name) },
-      props: { 
+      props: {
         slug: slug(item.fields.name),
         name: item.fields.name,
         title: item.fields.title,
         info: item.fields.info,
-        image: {
-          url: item.fields.image.fields.file.url,
-          description: item.fields.image.fields.description,
-        }
-      }
-    }
+        offer: item.fields.offer, // Fehler: "offer" ist nicht im Typ CFTeamMember definiert
+        image: item.fields.image
+          ? {
+              url: item.fields.image.fields.file.url,
+              description: item.fields.image.fields.description,
+            }
+          : undefined,
+      },
+    };
     return member;
   });
 
   return members;
 };
+
 export const getOffers = async () => {
   const entries = await contentfulClient.getEntries<CFOffer>({
     content_type: "offer",
   });
-  
-  const offers : Offer[] = entries.items.map((item: CFOffer) => {
 
+  const offers: Offer[] = entries.items.map((item: CFOffer) => {
     const offer: Offer = {
       contentTypeId: item.sys.contentType.sys.id,
       params: { slug: slug(item.fields.name) },
       props: {
-        
         slug: slug(item.fields.name),
         name: item.fields.name,
         intro: item.fields.intro,
         text: item.fields.text,
-        image: {
-          url: item.fields.image.fields.file.url,
-          description: item.fields.image.fields.description,
-        },
-        // logo: {
-          //   url: item.fields.logoDachverband.fields.file.url,
-      //   description: item.fields.logoDachverband.fields.description,
-      // },
-      // url: item.fields.urlDachverband,
-    }
-    }
+        image: item.fields.image
+          ? {
+              url: item.fields.image.fields.file.url,
+              description: item.fields.image.fields.description,
+            }
+          : undefined,
+        logo: item.fields.logoDachverband
+          ? {
+              url: item.fields.logoDachverband.fields.file.url,
+              description: item.fields.logoDachverband.fields.description,
+            }
+          : undefined,
+        link: item.fields.urlDachverband
+          ? {
+              url: item.fields.urlDachverband,
+            }
+          : undefined,
+      },
+    };
     return offer;
   });
   return offers;
 };
+
 export const getPages = async () => {
   const entries = await contentfulClient.getEntries<CFPage>({
     content_type: "page",
@@ -151,6 +164,7 @@ export const getLandingPage = async () => {
   );
   return page.fields;
 };
+
 export const getPageByID = async (id: string) => {
   const page = await contentfulClient.getEntry<CFPage>(id);
   return page.fields;

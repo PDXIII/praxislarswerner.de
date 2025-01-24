@@ -3,7 +3,7 @@ import { getTeamMembers } from "../../lib/API";
 import type { TeamMember } from "../../lib/types";
 import Base from "../../layouts/Base.astro";
 import PageHeader from "../../components/PageHeader.astro";
-import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
+import RichTextContainer from "../../components/RichTextContainer.astro";
 
 export async function getStaticPaths() {
     const teamMembers: TeamMember[] = await getTeamMembers();
@@ -11,14 +11,15 @@ export async function getStaticPaths() {
 }
 
 const { slug } = Astro.params;
-const { name, title, info, image } = Astro.props;
+const { name, title, info, image, offer } = Astro.props;
 ---
 
 <Base>
     <main>
         <article>
-            <PageHeader name={name} title?={title} image={image} />
-            <div class="prose" set:html={documentToHtmlString(info)} />
+            <PageHeader name={name} title={title} image={image} />
+            <h2 class="text-center text-xl text-brand px-16 py-8" set:html={offer.join(" • ")} />
+            <RichTextContainer content={info} />
         </article>
     </main>
 </Base>

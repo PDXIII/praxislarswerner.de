@@ -1,10 +1,12 @@
 ---
 const { name, title, image } = Astro.props;
+
 ---
 
-<header style={`background-image: url('https:${image.url}')`} class="flex w-screen h-96 flex-col items-center justify-center bg-cover bg-no-repeat bg-center">
-    <div class="z-10 text-center">
-        <h1>{name}</h1>
-        {title && <h1>{title}</h1>}
+<header class="sm:grid grid-cols-2 items-center justify-center bg-brand">
+    <img src={image.url} alt={image.description} />
+    <div class="z-10 text-center sm:text-left text-white p-4">
+        <h1 class="text-4xl font-smallCapsBold">{name}</h1>
+        {title && <h1 class="text-xl font-primaryExtraLight" >{title}</h1>}
     </div>
 </header>

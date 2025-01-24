@@ -8,6 +8,7 @@ export type TeamMember = {
     name: string,
     title: string,
     info: any,
+    offer: string[],
     image: {
       url: string,
       description: string

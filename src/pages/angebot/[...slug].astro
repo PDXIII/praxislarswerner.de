@@ -3,7 +3,7 @@ import { getOffers } from "../../lib/API";
 import type { Offer } from "../../lib/types";
 import Base from "../../layouts/Base.astro";
 import PageHeader from "../../components/PageHeader.astro";
-import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
+import RichTextContainer from "../../components/RichTextContainer.astro";
 
 export async function getStaticPaths() {
     const offers: Offer[] = await getOffers();
@@ -11,16 +11,21 @@ export async function getStaticPaths() {
 }
 
 const { slug } = Astro.params;
-const { name, intro, text, image } = Astro.props;
-
+const { name, intro, text, image, logo, link } = Astro.props;
 ---
 
 <Base>
     <main>
         <article>
             <PageHeader name={name} image={image} />
-
-            <div class="prose" set:html={documentToHtmlString(text)} />
+            <RichTextContainer content={text} />
+            {logo && link && ( 
+                <div class="w-full flex justify-center p-16">
+                    <a class="mx-auto"  href={link.url}>
+                        <img class="w-64 h-auto" src={logo.url} alt={logo.description}>
+                    </a>
+                </div>
+             )}
         </article>
     </main>
 </Base>
