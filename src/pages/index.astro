@@ -14,6 +14,7 @@ const offers: Offer[] = await getOffers();
 	<main>
 		<!-- TEAM -->
 		<section>
+			<h2 id="team">Team</h2>
 		{teamMembers.map((item) => (
 			<a href={`/team/${item.props.slug}`}>
 				<article>
@@ -27,6 +28,7 @@ const offers: Offer[] = await getOffers();
 		<!-- END TEAM -->
 		<!-- ANGEBOT -->
 		<section>
+			<h2 id="therapy">Therapien</h2>
 			{offers.map((item) => (
 				<a href={`/angebot/${item.props.slug}`}>
 					<article>
@@ -39,6 +41,8 @@ const offers: Offer[] = await getOffers();
 			))}
 		</section>
 		<!-- END ANGEBOT -->
-
+		<section>
+			<h2 id="contact">Kontakt</h2>
+		</section>
 	</main>
 </Base>

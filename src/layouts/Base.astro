@@ -1,5 +1,7 @@
 ---
 import "../styles/main.scss"
+
+import Navigation from "../components/Navigation.astro"
 ---
 <!doctype html>
 <html lang="de">
@@ -12,7 +14,9 @@ import "../styles/main.scss"
 	</head>
 	<body class="font-primary">
 		<slot />
+		
 	</body>
+	<Navigation />
 </html>
 
 <style>

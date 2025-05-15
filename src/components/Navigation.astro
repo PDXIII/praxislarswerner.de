@@ -1,0 +1,17 @@
+---
+import { getConfigByID } from "../lib/API";
+
+const navigation = await getConfigByID("14812i6b0KLxGsHx9jNlfv");
+
+console.log(navigation);
+---
+<nav>
+This is the navigation
+<ul>
+    {navigation.data.map((item) => (
+        <li>
+            <a href={item.link}>{item.name}</a>
+        </li>
+    ))}
+</ul>
+</nav>
