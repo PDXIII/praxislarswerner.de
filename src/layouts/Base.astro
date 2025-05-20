@@ -13,10 +13,12 @@ import Navigation from "../components/Navigation.astro"
 		<title>Astro Basics</title>
 	</head>
 	<body class="font-primary">
-		<slot />
+		<main class="pt-14">
+			<slot />
+		</main>
 		
+		<Navigation />
 	</body>
-	<Navigation />
 </html>
 
 <style>

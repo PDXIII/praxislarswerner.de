@@ -1,16 +1,16 @@
 ---
 import { getConfigByID } from "../lib/API";
+import { Icon } from 'astro-icon/components'
 
 const navigation = await getConfigByID("14812i6b0KLxGsHx9jNlfv");
 
 console.log(navigation);
 ---
-<nav>
-This is the navigation
-<ul>
+<nav class="fixed top-0 w-full font-smallCaps tracking-wider text-xl lowercase  text-brand shadow-md px-4 bg-white/10">
+<ul class="flex justify-end">
     {navigation.data.map((item) => (
-        <li>
-            <a href={item.link}>{item.name}</a>
+        <li class="">
+            <a class="leading-6 block p-4 hover:bg-brand hover:text-white transition-all drop-shadow-sm" href={item.link}>{item.name}</a>
         </li>
     ))}
 </ul>

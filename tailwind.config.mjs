@@ -26,7 +26,7 @@ export default {
 					...defaultTheme.fontFamily.sans,
 				],
 				smallCaps: [
-					'HalisRoundedSCLight',
+					'HalisRoundedSCRegular',
 					...defaultTheme.fontFamily.sans,
 				],
 				smallCapsExtraLight: [
