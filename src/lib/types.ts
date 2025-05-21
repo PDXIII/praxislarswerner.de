@@ -54,11 +54,26 @@ export type Page = {
   }
 }
 
-
 export type Config = {
   contentTypeId: "config",
   name: string,
   data: any,
+}
+
+export type Wisdom = {
+  contentTypeId: "wisdom",
+  props: {
+    author: string,
+    quote: string,
+  }
+}
+
+export type Partner = {
+  contentTypeId: "associates",
+  props: {
+    name: string,
+    link: string
+  }
 }
 
 export type LandingPage = {

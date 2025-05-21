@@ -3,6 +3,8 @@ import type { EntryFieldTypes } from "contentful";
 import type {
   TeamMember,
   Offer,
+  Wisdom,
+  Partner,
   Page,
   Config,
   LandingPage,
@@ -56,6 +58,14 @@ interface CFWisdom {
   fields: {
     author: EntryFieldTypes.Text;
     quote: EntryFieldTypes.Text;
+  };
+}
+
+interface CFPartner {
+  contentTypeId: "associates";
+  fields: {
+    name: EntryFieldTypes.Text;
+    link: EntryFieldTypes.Text;
   };
 }
 interface CFConfig {
@@ -143,6 +153,24 @@ export const getWisdoms = async () => {
     return wisdom;
   })
   return wisdoms;
+};
+
+
+export const getPartners = async () => {
+  const entries = await contentfulClient.getEntries<CFPartner>({
+    content_type: "associates",
+  });
+  const partners = entries.items.map((item: CFPartner) => {
+    const partner = {
+      contentTypeId: item.sys.contentType.sys.id,
+      props: {
+        name: item.fields.name,
+        link: item.fields.link,
+      },
+    }
+    return partner;
+  })
+  return partners;
 };
 
 export const getOffers = async () => {

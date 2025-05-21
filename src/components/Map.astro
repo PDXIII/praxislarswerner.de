@@ -1,0 +1,78 @@
+---
+import "mapbox-gl/dist/mapbox-gl.css";
+
+const { data } = Astro.props;
+---
+
+<div id="map" class="h-screen w-screen"></div>
+<div class="popup-wrapper hidden">
+    
+    <div id="contact-popup" class=" p-4 ">
+        <header class="font-primary text-center mb-4">
+            <h1 class="prefix lowercase font-smallCaps leading-none text-brand tracking-wider" set:html={data.prefix} />
+            <h1 class="title font-smallCaps text-xl text-brand tracking-wider mb-1">
+                <span class="border-brand  px-4 border-b-2"> {data.owner}</span>
+            </h1>
+            <p class="subtitle" set:html={data.subtitle} />
+        </header>
+        <div class="contact font-primary text-center">
+            <a href="tel:{data.phone}"set:html={data.phone} class="phone text-brand font-primaryRegular text-xl mb-2" />
+            <p>
+                {data.address.street}
+                <br />
+                {data.address.postal} {data.address.city}
+                <br />
+                <a href="mailto:{data.email}" set:html={data.email} class="email text-brand font-primaryRegular tracking-wider" />
+            </p>
+
+        </div>
+</div>
+</div>
+
+<script>
+  import mapboxgl from "mapbox-gl";
+
+  const initMap = () => {
+    var center = [13.3799, 52.522];
+
+    mapboxgl.accessToken =
+      "pk.eyJ1IjoicGR4aWlpIiwiYSI6ImJqQkc3TDAifQ.EZmJJsZq2eymDWsPiPD-UQ";
+    const map = new mapboxgl.Map({
+      container: "map",
+      style: "mapbox://styles/pdxiii/cjkydeowq398m2soa2jcaafqh",
+      center: center,
+      maxZoom: 16,
+      minZoom: 12,
+      zoom: 14,
+      scrollZoom: false,
+      doubleClickZoom: true,
+      crossDomain: true,
+    });
+
+    var popup = new mapboxgl.Popup({
+      offset: {
+        top: [0, 9],
+        bottom: [0, -9],
+      },
+    }).setHTML(document.getElementById('contact-popup').innerHTML);
+
+    var markerDiv = document.createElement("div");
+    markerDiv.className = "marker";
+    markerDiv.style.backgroundImage = "url(/images/MapMarker.png)";
+    markerDiv.style.backgroundSize = "cover";
+    markerDiv.style.width = "1.5rem";
+    markerDiv.style.height = "1.5rem";
+    markerDiv.style.zIndex = "10";
+
+    var marker = new mapboxgl.Marker(markerDiv)
+      .setLngLat(center)
+      .setPopup(popup)
+      .addTo(map)
+      .togglePopup();
+
+    console.log("map is loading");
+  };
+
+  initMap();
+</script>
+

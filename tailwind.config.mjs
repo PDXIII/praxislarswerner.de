@@ -17,8 +17,8 @@ export default {
 					'HalisRoundedExtraLight',
 					...defaultTheme.fontFamily.sans,
 				],
-				primaryLight: [
-					'HalisRoundedLight',
+				primaryRegular: [
+					'HalisRoundedRegular',
 					...defaultTheme.fontFamily.sans,
 				],
 				primaryBold: [
