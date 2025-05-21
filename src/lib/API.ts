@@ -51,6 +51,21 @@ interface CFOffer {
   };
 }
 
+interface CFWisdom {
+  contentTypeId: "wisdom";
+  fields: {
+    author: EntryFieldTypes.Text;
+    quote: EntryFieldTypes.Text;
+  };
+}
+interface CFConfig {
+  contentTypeId: "config";
+  fields: {
+    name: EntryFieldTypes.Text;
+    data: EntryFieldTypes.Object;
+  };
+}
+
 interface CFPage {
   contentTypeId: "page";
   fields: {
@@ -111,6 +126,23 @@ export const getTeamMembers = async () => {
   });
 
   return members;
+};
+
+export const getWisdoms = async () => {
+  const entries = await contentfulClient.getEntries<CFWisdom>({
+    content_type: "wisdom",
+  });
+  const wisdoms = entries.items.map((item: CFWisdom) => {
+    const wisdom = {
+      contentTypeId: item.sys.contentType.sys.id,
+      props: {
+        author: item.fields.author,
+        quote: item.fields.quote,
+      },
+    }
+    return wisdom;
+  })
+  return wisdoms;
 };
 
 export const getOffers = async () => {
