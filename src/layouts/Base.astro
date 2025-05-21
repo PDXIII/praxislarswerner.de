@@ -2,6 +2,7 @@
 import "../styles/main.scss"
 
 import Navigation from "../components/Navigation.astro"
+import Footer from "../components/Footer.astro"
 ---
 <!doctype html>
 <html lang="de">
@@ -15,6 +16,7 @@ import Navigation from "../components/Navigation.astro"
 	<body class="font-primary">
 		<div class="pb-20 md:pt-14 md:pb-0">
 			<slot />
+			<Footer />
 		</div>
 		
 		<Navigation />
