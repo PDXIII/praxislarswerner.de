@@ -19,7 +19,7 @@ const { name, title, info, image, offer } = Astro.props;
         <article>
             <PageHeader name={name} title={title} image={image} />
             <h2 class="text-center text-xl text-brand px-16 py-8" set:html={offer.join(" • ")} />
-            <RichTextContainer content={info} />
+            <RichTextContainer class="p-4" content={info} />
         </article>
     </main>
 </Base>

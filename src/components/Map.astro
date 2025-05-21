@@ -5,28 +5,38 @@ const { data } = Astro.props;
 ---
 
 <div id="map" class="h-screen w-screen"></div>
-<div class="popup-wrapper hidden">
-    
-    <div id="contact-popup" class=" p-4 ">
-        <header class="font-primary text-center mb-4">
-            <h1 class="prefix lowercase font-smallCaps leading-none text-brand tracking-wider" set:html={data.prefix} />
-            <h1 class="title font-smallCaps text-xl text-brand tracking-wider mb-1">
-                <span class="border-brand  px-4 border-b-2"> {data.owner}</span>
-            </h1>
-            <p class="subtitle" set:html={data.subtitle} />
-        </header>
-        <div class="contact font-primary text-center">
-            <a href="tel:{data.phone}"set:html={data.phone} class="phone text-brand font-primaryRegular text-xl mb-2" />
-            <p>
-                {data.address.street}
-                <br />
-                {data.address.postal} {data.address.city}
-                <br />
-                <a href="mailto:{data.email}" set:html={data.email} class="email text-brand font-primaryRegular tracking-wider" />
-            </p>
-
-        </div>
-</div>
+<div class="hidden">
+  <div id="contact-popup">
+    <header class="font-primary text-center mb-4">
+      <h1
+        class="prefix lowercase text-lg font-smallCaps leading-none text-brand tracking-wider"
+        set:html={data.prefix}
+      />
+      <h1 class="title font-smallCaps text-2xl text-brand tracking-wider mb-1">
+        <span class="border-brand px-4 border-b-2"> {data.owner}</span>
+      </h1>
+      <p class="subtitle text-lg" set:html={data.subtitle} />
+    </header>
+    <div class="contact font-primary text-center text-lg">
+      <a
+        href="tel:{data.phone}"
+        set:html={data.phone}
+        class="phone text-brand font-primaryRegular text-xl mb-2"
+      />
+      <p>
+        {data.address.street}
+        <br />
+        {data.address.postal}
+        {data.address.city}
+        <br />
+        <a
+          href="mailto:{data.email}"
+          set:html={data.email}
+          class="email text-brand font-primaryRegular tracking-wider"
+        />
+      </p>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -54,14 +64,14 @@ const { data } = Astro.props;
         top: [0, 9],
         bottom: [0, -9],
       },
-    }).setHTML(document.getElementById('contact-popup').innerHTML);
+    }).setHTML(document.getElementById("contact-popup").innerHTML);
 
     var markerDiv = document.createElement("div");
     markerDiv.className = "marker";
     markerDiv.style.backgroundImage = "url(/images/MapMarker.png)";
     markerDiv.style.backgroundSize = "cover";
-    markerDiv.style.width = "1.5rem";
-    markerDiv.style.height = "1.5rem";
+    markerDiv.style.width = "2rem";
+    markerDiv.style.height = "2rem";
     markerDiv.style.zIndex = "10";
 
     var marker = new mapboxgl.Marker(markerDiv)
@@ -69,10 +79,7 @@ const { data } = Astro.props;
       .setPopup(popup)
       .addTo(map)
       .togglePopup();
-
-    console.log("map is loading");
   };
 
   initMap();
 </script>
-

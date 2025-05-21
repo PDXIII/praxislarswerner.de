@@ -1,9 +1,16 @@
 ---
-import { getTeamMembers, getOffers, getPartners, getConfigByID } from "../lib/API";
+import {
+  getTeamMembers,
+  getOffers,
+  getPartners,
+  getConfigByID,
+} from "../lib/API";
 import type { TeamMember, Offer, Partner } from "../lib/types";
 import Base from "../layouts/Base.astro";
 import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
+import TeamList from "../components/TeamList.astro";
 import Map from "../components/Map.astro";
+import SectionHeader from "../components/SectionHeader.astro";
 
 const teamMembers: TeamMember[] = await getTeamMembers();
 
@@ -13,32 +20,17 @@ console.log(settings);
 
 const offers: Offer[] = await getOffers();
 const partners: Partner[] = await getPartners();
-
 ---
 
 <Base>
   <main>
     <!-- TEAM -->
-    <section>
-      <h2 id="team">Team</h2>
-      {
-        teamMembers.map((item) => (
-          <a href={`/team/${item.props.slug}`}>
-            <article>
-              <h2 set:html={item.props.name} />
-              <img
-                src={item.props.image.url}
-                alt={item.props.image.description}
-              />
-            </article>
-          </a>
-        ))
-      }
-    </section>
+    <TeamList teamMembers={teamMembers} />
+
     <!-- END TEAM -->
     <!-- ANGEBOT -->
     <section>
-      <h2 id="therapy">Therapien</h2>
+      <SectionHeader title="Therapien" id="therapy" />
       {
         offers.map((item) => (
           <a href={`/angebot/${item.props.slug}`}>
@@ -59,23 +51,28 @@ const partners: Partner[] = await getPartners();
     </section>
     <!-- END ANGEBOT -->
     <section>
-      <h2 id="contact">Kontakt</h2>
-    </section>
-	<Map data={settings.data} />
-    <section class="p-4">
-      <h2 class="text-2xl text-center mb-3" id="partners">Unsere Partner</h2>
-      <ul class="flex flex-wrap justify-around font-smallCaps text-lg">
-        {
-          partners.map((item, index) => (
-			<>
-            <li>
-              <a class="hover:underline underline-offset-4 text-brand" href={item.props.link} set:html={item.props.name} />
-            </li>
-			  {index < partners.length - 1 && <span> • </span>}
-			  </>
-          ))
-        }
-      </ul>
+      <SectionHeader title="Kontakt" id="contact" />
+      <Map data={settings.data} />
+      <section class="p-4">
+        <SectionHeader title="Unsere Partner" id="partners" />
+
+        <ul class="flex flex-wrap justify-around font-smallCaps text-lg">
+          {
+            partners.map((item, index) => (
+              <>
+                <li>
+                  <a
+                    class="hover:underline underline-offset-4 text-brand"
+                    href={item.props.link}
+                    set:html={item.props.name}
+                  />
+                </li>
+                {index < partners.length - 1 && <span> • </span>}
+              </>
+            ))
+          }
+        </ul>
+      </section>
     </section>
   </main>
 </Base>

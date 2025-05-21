@@ -18,7 +18,7 @@ const { name, intro, text, image, logo, link } = Astro.props;
     <main>
         <article>
             <PageHeader name={name} image={image} />
-            <RichTextContainer content={text} />
+            <RichTextContainer class="p-4" content={text} />
             {logo && link && ( 
                 <div class="w-full flex justify-center p-16">
                     <a class="mx-auto"  href={link.url}>
