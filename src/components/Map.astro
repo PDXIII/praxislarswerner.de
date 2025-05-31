@@ -1,10 +1,10 @@
 ---
 import "mapbox-gl/dist/mapbox-gl.css";
 
-const { data } = Astro.props;
+const { id, data } = Astro.props;
 ---
 
-<div id="map" class="h-screen w-screen"></div>
+<div id={id} class="h-screen w-screen"></div>
 <div class="hidden">
   <div id="contact-popup">
     <header class="font-primary text-center mb-4">

@@ -11,12 +11,11 @@ import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
 import TeamList from "../components/TeamList.astro";
 import Map from "../components/Map.astro";
 import SectionHeader from "../components/SectionHeader.astro";
+import ContactForm from "../components/ContactForm.astro";
 
 const teamMembers: TeamMember[] = await getTeamMembers();
 
 const settings = await getConfigByID("5eUmE4yWNEM9xNibICQaWh");
-
-console.log(settings);
 
 const offers: Offer[] = await getOffers();
 const partners: Partner[] = await getPartners();
@@ -52,27 +51,28 @@ const partners: Partner[] = await getPartners();
     <!-- END ANGEBOT -->
     <section>
       <SectionHeader title="Kontakt" id="contact" />
-      <Map data={settings.data} />
-      <section class="p-4">
-        <SectionHeader title="Unsere Partner" id="partners" />
+      <Map id="map"data={settings.data} />
+      <ContactForm />
+    </section>
+    <section class="p-4">
+      <SectionHeader title="Unsere Partner" id="partners" />
 
-        <ul class="flex flex-wrap justify-around font-smallCaps text-lg">
-          {
-            partners.map((item, index) => (
-              <>
-                <li>
-                  <a
-                    class="hover:underline underline-offset-4 text-brand"
-                    href={item.props.link}
-                    set:html={item.props.name}
-                  />
-                </li>
-                {index < partners.length - 1 && <span> • </span>}
-              </>
-            ))
-          }
-        </ul>
-      </section>
+      <ul class="flex flex-wrap justify-around font-smallCaps text-lg">
+        {
+          partners.map((item, index) => (
+            <>
+              <li>
+                <a
+                  class="hover:underline underline-offset-4 text-brand"
+                  href={item.props.link}
+                  set:html={item.props.name}
+                />
+              </li>
+              {index < partners.length - 1 && <span> • </span>}
+            </>
+          ))
+        }
+      </ul>
     </section>
   </main>
 </Base>

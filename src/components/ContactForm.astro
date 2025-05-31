@@ -1,0 +1,24 @@
+---
+import InputField from "./InputField.astro"
+import SectionHeader from "./SectionHeader.astro"
+---
+
+<section>
+    <SectionHeader id="contact-form" title="Oder schreiben Sie uns!" />
+    <form id="form" class="grid grid-cols-2 gap-8 prose mx-auto py-8" netlify>
+        <InputField class="col-span-2 sm:col-span-1 " id="Vorname" label="Vorname" type="text" placeholder="Ihr Vorname" />
+        <InputField class="col-span-2 sm:col-span-1 " id="Nachname" label="Nachname" type="text" placeholder="Ihr Nachname" />
+        <InputField class="col-span-2 sm:col-span-1 " id="email" label="E-Mail" type="email" placeholder="Ihre E-Mail Adresse" />
+        <InputField class="col-span-2 sm:col-span-1 " id="phone" label="Telefon" type="tel" placeholder="Ihre Telefonnummer" />
+
+        <div class="col-span-2 flex flex-wrap">
+
+            <label class="w-24 text-right text-white bg-brand p-2" for="Nachricht">Nachricht</label>
+            <textarea class="w-full border border-1 border-brand p-2 "  name="Nachricht" id="message" cols="30" rows="10" placeholder="Ihre Nachricht an uns"></textarea>
+        </div>
+        <div class="col-span-2 flex justify-end" >
+
+            <input id="contact-submit" class="bg-brand text-white px-8 py-2 hover:underline transition-all hover:scale-105 hover:shadow-lg  hover:underline-offset-4 font-smallCaps tracking-wider text-lg" type="submit" value="Senden"/>
+        </div>
+        </form>
+</section>

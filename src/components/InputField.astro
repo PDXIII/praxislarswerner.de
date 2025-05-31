@@ -1,0 +1,19 @@
+---
+
+interface Props {
+    id: string;
+    label: string;
+    type: string;
+    placeholder: string;
+    class?: string
+}
+const { id, label, type, placeholder, class: classList } = Astro.props;
+---
+
+<div class={` flex overflow-hidden border-e border-brand ${classList || ""}`}>
+    <label class="basis-24 flex-shrink-0 text-right text-white bg-brand p-2" for={label}>
+        {label}
+    </label>
+
+    <input id={id} name={label} class="flex-1  border-brand border shrink-2 p-2" type={type} placeholder={placeholder} />
+</div>
