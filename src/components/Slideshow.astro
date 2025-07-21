@@ -1,0 +1,33 @@
+---
+const { images } = Astro.props;
+---
+
+<div class="-mt-14  relative h-full w-full aspect-[16/9] overflow-hidden">
+  {
+    images.map((image, index) => (
+      <img
+        src={image.fields.file.url}
+        alt={image.fields.description}
+        class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"
+        style={`opacity: ${index === 0 ? 1 : 0}`}
+        data-carousel-item
+      />
+    ))
+  }
+</div>
+
+<script type="module" is:browser>
+  const slides = document.querySelectorAll('[data-carousel-item]');
+  let current = 0;
+
+  function showSlide(index) {
+    slides.forEach((slide, i) => {
+      slide.style.opacity = i === index ? '1' : '0';
+    });
+  }
+
+  setInterval(() => {
+    current = (current + 1) % slides.length;
+    showSlide(current);
+  }, 10000); // alle 10 Sekunden
+</script>

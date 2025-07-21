@@ -4,6 +4,7 @@ import {
   getOffers,
   getPartners,
   getConfigByID,
+  getLandingPage,
 } from "../lib/API";
 import type { TeamMember, Offer, Partner } from "../lib/types";
 import Base from "../layouts/Base.astro";
@@ -13,6 +14,10 @@ import OfferList from "../components/OfferList.astro";
 import Map from "../components/Map.astro";
 import SectionHeader from "../components/SectionHeader.astro";
 import ContactForm from "../components/ContactForm.astro";
+import RichTextContainer from "../components/RichTextContainer.astro";
+import Slideshow from "../components/Slideshow.astro";
+
+const landingPage = await getLandingPage();
 
 const teamMembers: TeamMember[] = await getTeamMembers();
 
@@ -23,7 +28,21 @@ const partners: Partner[] = await getPartners();
 ---
 
 <Base>
+    <header class="w-screen h-screen relative">
+      <Slideshow images={landingPage.slideshowImages} />
+      <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 text-shadow-lg text-center">
+        <h1
+        class="prefix lowercase text-xl font-smallCaps leading-none text-brand tracking-wider drop-shadow-lg"
+        set:html={settings.data.prefix}
+        />
+        <h1 class="title font-smallCapsBold text-4xl text-brand tracking-wider mb-4 drop-shadow-xl">
+          <span class="border-brand px-8 border-b-2"> {settings.data.owner}</span>
+        </h1>
+        <p class="subtitle font-primary text-xl" set:html={settings.data.subtitle} />
+      </div>
+    </header>
   <main>
+     <RichTextContainer class="p-4 text-center" content={landingPage.introText} />
     <!-- TEAM -->
     <TeamList teamMembers={teamMembers} />
 
@@ -35,6 +54,7 @@ const partners: Partner[] = await getPartners();
     <section>
       <SectionHeader title="Kontakt" id="contact" />
       <Map id="map" data={settings.data} />
+      <RichTextContainer class="p-4 text-center" content={landingPage.contactText} />
       <ContactForm />
     </section>
     <section class="p-4">
