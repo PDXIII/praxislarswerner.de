@@ -9,6 +9,7 @@ import type { TeamMember, Offer, Partner } from "../lib/types";
 import Base from "../layouts/Base.astro";
 import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
 import TeamList from "../components/TeamList.astro";
+import OfferList from "../components/OfferList.astro";
 import Map from "../components/Map.astro";
 import SectionHeader from "../components/SectionHeader.astro";
 import ContactForm from "../components/ContactForm.astro";
@@ -28,30 +29,12 @@ const partners: Partner[] = await getPartners();
 
     <!-- END TEAM -->
     <!-- ANGEBOT -->
-    <section>
-      <SectionHeader title="Therapien" id="therapy" />
-      {
-        offers.map((item) => (
-          <a href={`/angebot/${item.props.slug}`}>
-            <article>
-              <h2 set:html={item.props.name} />
-              {item.props.image && (
-                <img
-                  src={item.props.image.url}
-                  alt={item.props.image.description}
-                />
-              )}
-
-              <div set:html={documentToHtmlString(item.props.intro)} />
-            </article>
-          </a>
-        ))
-      }
-    </section>
+     <OfferList offers={offers} />
+   
     <!-- END ANGEBOT -->
     <section>
       <SectionHeader title="Kontakt" id="contact" />
-      <Map id="map"data={settings.data} />
+      <Map id="map" data={settings.data} />
       <ContactForm />
     </section>
     <section class="p-4">
