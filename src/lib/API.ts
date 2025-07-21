@@ -215,7 +215,29 @@ export const getPages = async () => {
   const entries = await contentfulClient.getEntries<CFPage>({
     content_type: "page",
   });
-  return entries.items;
+
+  const pages: Page[] = entries.items.map((item: CFPage) => {
+    const page: Page = {
+      contentTypeId: item.sys.contentType.sys.id,
+      params: { slug: slug(item.fields.name) },
+      props: {
+        slug: slug(item.fields.name),
+        name: item.fields.name,
+        text: item.fields.text,
+        info: item.fields.info,
+        image: item.fields.image
+          ? {
+              url: item.fields.image.fields.file.url,
+              description: item.fields.image.fields.description,
+            }
+          : undefined,
+      },
+    };
+    return page;
+  });
+  return pages;
+
+
 };
 
 export const getLandingPage = async () => {
