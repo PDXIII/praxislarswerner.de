@@ -24,6 +24,7 @@ import SectionHeader from "./SectionHeader.astro";
       class="col-span-2 sm:col-span-1"
       id="email"
       label="E-Mail"
+      pattern="^[^@\s]+@[^@\s]+\.[^@\s]+$"
       type="email"
       placeholder="Ihre E-Mail Adresse"
     />
@@ -31,16 +32,17 @@ import SectionHeader from "./SectionHeader.astro";
       class="col-span-2 sm:col-span-1"
       id="phone"
       label="Telefon"
+      pattern="^[0-9+\s()-]{6,}$"
       type="tel"
       placeholder="Ihre Telefonnummer"
     />
 
-    <div class="col-span-2 flex flex-wrap">
-      <label class="w-24 text-right text-white bg-brand p-2" for="Nachricht"
+    <div class="group col-span-2 flex flex-wrap">
+      <label class="w-24 text-right text-white bg-brand  group-focus-within:bg-black transition-all p-2" for="Nachricht"
         >Nachricht</label
       >
       <textarea
-        class="w-full border border-1 border-brand p-2"
+        class="w-full border border-1 border-brand p-2  group-focus-within:border-black transition-all"
         name="Nachricht"
         id="message"
         cols="30"
@@ -59,20 +61,39 @@ import SectionHeader from "./SectionHeader.astro";
 </section>
 
 <script>
-  const handleSubmit = (event) => {
-    event.preventDefault();
+  const form = document.querySelector("form");
 
-    const myForm = event.target;
-    const formData = new FormData(myForm);
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const formData = new FormData(form);
+    let valid = true;
+
+    form.querySelectorAll("input, textarea").forEach((field) => {
+      field.classList.remove("border-red-500");
+      field.nextElementSibling?.remove();
+
+      if (!field.checkValidity()) {
+        valid = false;
+        field.classList.add("border-red-500");
+        const msg = document.createElement("div");
+        msg.className = "text-red-600 text-sm mt-1";
+        msg.textContent = field.validationMessage;
+        field.insertAdjacentElement("afterend", msg);
+      }
+    });
+
+    if (!valid) return;
 
     fetch("/", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams(formData).toString(),
     })
-      .then(() => alert("Danke für Ihre Nachricht!"))
-      .catch((error) => alert(error));
-  };
-
-  document.querySelector("form").addEventListener("submit", handleSubmit);
+      .then(() => {
+        alert("Danke für Ihre Nachricht!");
+        form.reset();
+      })
+      .catch((error) => alert("Fehler: " + error));
+  });
 </script>
+
