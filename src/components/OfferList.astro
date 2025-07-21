@@ -4,9 +4,9 @@ import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
 const { offers } = Astro.props;
 ---
 
-<section>
+<section class="xl:container mx-auto px-4 mb-8">
   <SectionHeader title="Therapien" id="therapy" />
-  <ul class="mx-auto py-8">
+  <ul class="mx-auto">
     {
       offers.map((item, index) => (
         <li>

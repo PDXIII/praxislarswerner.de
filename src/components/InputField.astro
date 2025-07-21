@@ -11,7 +11,7 @@ const { id, label, type, placeholder, class: classList } = Astro.props;
 ---
 
 <div class={` flex overflow-hidden border-e border-brand ${classList || ""}`}>
-    <label class="basis-24 flex-shrink-0 text-right text-white bg-brand p-2" for={label}>
+    <label class="basis-24 flex-shrink-0 text-right text-white bg-brand p-2" for={id}>
         {label}
     </label>
 

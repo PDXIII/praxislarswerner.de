@@ -51,15 +51,14 @@ const partners: Partner[] = await getPartners();
      <OfferList offers={offers} />
    
     <!-- END ANGEBOT -->
-    <section>
+    <section class="mb-8">
       <SectionHeader title="Kontakt" id="contact" />
       <Map id="map" data={settings.data} />
       <RichTextContainer class="p-4 text-center" content={landingPage.contactText} />
       <ContactForm />
     </section>
-    <section class="p-4">
+    <section class="p-4 mb-8 xl:container mx-auto">
       <SectionHeader title="Unsere Partner" id="partners" />
-
       <ul class="flex flex-wrap justify-around font-smallCaps text-lg">
         {
           partners.map((item, index) => (
