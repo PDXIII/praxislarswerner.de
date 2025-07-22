@@ -11,10 +11,10 @@ interface Props {
 const { id, label, type, placeholder, pattern, class: classList } = Astro.props;
 ---
 
-<div class={`group flex overflow-hidden border-e border-brand ${classList || ""}`}>
-    <label class="basis-24 flex-shrink-0 text-right text-white bg-brand p-2 group-focus-within:bg-black transition-all " for={id}>
+<div class={`group flex overflow-hidden  border-brand border ${classList || ""}`}>
+    <label class="basis-24 flex-shrink-0 font-smallCaps tracking-wider text-brand  group-focus-within:text-white group-focus-within:bg-brand p-2 transition-all " for={id}>
         {label}
     </label>
 
-    <input id={id} name={label} pattern={pattern}    class="flex-1  border-brand border shrink-2 p-2  group-focus-within:border-black transition-all" type={type} placeholder={placeholder} />
+    <input id={id} name={label} pattern={pattern}    class="flex-1 shrink-2 p-2 outline-none" type={type} placeholder={placeholder} />
 </div>
