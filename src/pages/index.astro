@@ -35,10 +35,10 @@ const partners: Partner[] = await getPartners();
         class="prefix lowercase text-xl font-smallCaps leading-none text-brand tracking-wider drop-shadow-lg"
         set:html={settings.data.prefix}
         />
-        <h1 class="title font-smallCapsBold text-4xl text-brand tracking-wider mb-4 drop-shadow-xl">
-          <span class="border-brand px-8 border-b-2"> {settings.data.owner}</span>
+        <h1 class="title min-w-52 font-smallCapsBold text-2xl sm:text-4xl text-brand tracking-wider mb-2 drop-shadow-xl">
+          <span class="border-brand px-4  sm:px-8 border-b-2"> {settings.data.owner}</span>
         </h1>
-        <p class="subtitle font-primary text-xl" set:html={settings.data.subtitle} />
+        <p class="subtitle font-primary text-lg  sm:text-xl" set:html={settings.data.subtitle} />
       </div>
     </header>
   <main>

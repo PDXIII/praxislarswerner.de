@@ -12,7 +12,7 @@ const { id, data } = Astro.props;
         class="prefix lowercase text-lg font-smallCaps leading-none text-brand tracking-wider"
         set:html={data.prefix}
       />
-      <h1 class="title font-smallCaps text-2xl text-brand tracking-wider mb-1">
+      <h1 class="title font-smallCapsBold text-2xl text-brand tracking-wider mb-2">
         <span class="border-brand px-4 border-b-2"> {data.owner}</span>
       </h1>
       <p class="subtitle text-lg" set:html={data.subtitle} />
