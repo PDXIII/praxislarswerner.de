@@ -1,31 +1,43 @@
 ---
-import { getOffers } from "../../lib/API";
+import { getOffers, getTeamMembers } from "../../lib/API";
 import type { Offer } from "../../lib/types";
 import Base from "../../layouts/Base.astro";
 import PageHeader from "../../components/PageHeader.astro";
 import RichTextContainer from "../../components/RichTextContainer.astro";
+import TeamList from "../../components/TeamList.astro";
 
 export async function getStaticPaths() {
-    const offers: Offer[] = await getOffers();
-    return offers;
+  const offers: Offer[] = await getOffers();
+  return offers;
 }
+
+const team = await getTeamMembers();
 
 const { slug } = Astro.params;
 const { name, intro, text, image, logo, link } = Astro.props;
+
+const therapists = team
+  .filter((item) => item.props.offer.includes(name))
+  .sort((a, b) => a.props.order - b.props.order);
+
+console.log(therapists);
 ---
 
 <Base>
-    <main>
-        <article>
-            <PageHeader name={name} image={image} />
-            <RichTextContainer class="p-4" content={text} />
-            {logo && link && ( 
-                <div class="w-full flex justify-center p-16">
-                    <a class="mx-auto"  href={link.url}>
-                        <img class="w-64 h-auto" src={logo.url} alt={logo.description}>
-                    </a>
-                </div>
-             )}
-        </article>
-    </main>
+  <main>
+    <article>
+      <PageHeader name={name} image={image} />
+      <RichTextContainer class="p-4" content={text} />
+      {
+        logo && link && (
+          <div class="w-full flex justify-center p-16">
+            <a class="mx-auto" href={link.url}>
+              <img class="w-64 h-auto" src={logo.url} alt={logo.description} />
+            </a>
+          </div>
+        )
+      }
+    </article>
+    {therapists.length > 0 && <TeamList teamMembers={therapists} />}
+  </main>
 </Base>
