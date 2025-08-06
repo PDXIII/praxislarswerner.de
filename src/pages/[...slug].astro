@@ -6,19 +6,20 @@ import PageHeader from "../components/PageHeader.astro";
 import RichTextContainer from "../components/RichTextContainer.astro";
 
 export async function getStaticPaths() {
-    const pages: Page[] = await getPages();
-    return pages;
+  const pages: Page[] = await getPages();
+  return pages;
 }
 
 const { slug } = Astro.params;
-const { name,  text, image, info } = Astro.props;
+const { name, text, image, info } = Astro.props;
 ---
 
 <Base>
-    <main>
-        <article>
-            <PageHeader name={name} title={name} image={image} />
-            <RichTextContainer class="p-4" content={text} />
-        </article>
-    </main>
+  <main>
+    <article>
+      <PageHeader name={name} title={name} image={image} />
+      <RichTextContainer class="p-4" content={text} />
+    </article>
+  </main>
+  
 </Base>
