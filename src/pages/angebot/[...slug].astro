@@ -16,11 +16,9 @@ const team = await getTeamMembers();
 const { slug } = Astro.params;
 const { name, intro, text, image, logo, link } = Astro.props;
 
-const therapists = team
-  .filter((item) => item.props.offer.includes(name))
-  .sort((a, b) => a.props.order - b.props.order);
+const therapists = team.filter((item) => item.props.offer.includes(name));
 
-console.log(therapists);
+// console.log(therapists);
 ---
 
 <Base>

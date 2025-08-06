@@ -112,36 +112,51 @@ interface CFLandingPage {
   };
 }
 
-export const getTeamMembers = async () => {
-  const entries = await contentfulClient.getEntries<CFTeamMember>({
-    content_type: "teamMember",
-  });
+export const getTeamMembers = async (): Promise<TeamMember[]> => {
+  try {
+    const entries = await contentfulClient.getEntries<CFTeamMember>({
+      content_type: "teamMember",
+    });
 
-  const members: TeamMember[] = entries.items.map((item: CFTeamMember) => {
-    const member: TeamMember = {
-      contentTypeId: item.sys.contentType.sys.id,
-      params: { slug: slug(item.fields.name) },
-      props: {
-        slug: slug(item.fields.name),
-        name: item.fields.name,
-        order: item.fields.order,
-        title: item.fields.title,
-        info: item.fields.info,
-        offer: item.fields.offer, // Fehler: "offer" ist nicht im Typ CFTeamMember definiert
-        image: item.fields.image
-          ? {
-              url: item.fields.image.fields.file.url,
-              description: item.fields.image.fields.description,
-            }
-          : undefined,
-      },
-    };
-    // console.log(member);
-    return member;
-  });
+    if (!entries?.items) {
+      throw new Error("Contentful response enthält keine Team-Mitglieder.");
+    }
 
-  return members.sort((a, b) => a.props.order - b.props.order);
+    const members: TeamMember[] = entries.items.map((item) => {
+      const { name, order, title, info, offer, image } = item.fields;
+
+      if (!name || typeof order !== "number") {
+        throw new Error(`Pflichtfelder fehlen bei Team-Mitglied mit ID: ${item.sys.id}`);
+      }
+
+      return {
+        contentTypeId: item.sys.contentType.sys.id,
+        params: { slug: slug(name) },
+        props: {
+          slug: slug(name),
+          name,
+          order,
+          title,
+          info,
+          offer,
+          image: image
+            ? {
+                url: image.fields?.file?.url ?? "",
+                description: image.fields?.description ?? "",
+              }
+            : undefined,
+        },
+      };
+    });
+
+    return members.sort((a, b) => a.props.order - b.props.order);
+
+  } catch (error) {
+    console.error("Fehler beim Abrufen der Team-Mitglieder:", error);
+    throw new Error("Team-Mitglieder konnten nicht geladen werden.");
+  }
 };
+
 
 export const getWisdoms = async () => {
   const entries = await contentfulClient.getEntries<CFWisdom>({
@@ -178,45 +193,59 @@ export const getPartners = async () => {
   return partners;
 };
 
-export const getOffers = async () => {
-  const entries = await contentfulClient.getEntries<CFOffer>({
-    content_type: "offer",
-  });
+export const getOffers = async (): Promise<Offer[]> => {
+  try {
+    const entries = await contentfulClient.getEntries<CFOffer>({
+      content_type: "offer",
+    });
 
-  const offers: Offer[] = entries.items.map((item: CFOffer) => {
-    const offer: Offer = {
-      contentTypeId: item.sys.contentType.sys.id,
-      params: { slug: slug(item.fields.name) },
-      props: {
-        slug: slug(item.fields.name),
-        name: item.fields.name,
-        order: item.fields.order,
-        intro: item.fields.intro,
-        text: item.fields.text,
-        image: item.fields.image
-          ? {
-              url: item.fields.image.fields.file.url,
-              description: item.fields.image.fields.description,
-            }
-          : undefined,
-        logo: item.fields.logoDachverband
-          ? {
-              url: item.fields.logoDachverband.fields.file.url,
-              description: item.fields.logoDachverband.fields.description,
-            }
-          : undefined,
-        link: item.fields.urlDachverband
-          ? {
-              url: item.fields.urlDachverband,
-            }
-          : undefined,
-      },
-    };
-    // console.log(offer);
-    return offer;
-  });
-  return offers.sort((a, b) => a.props.order - b.props.order);
+    if (!entries?.items) {
+      throw new Error("Contentful response enthält keine items.");
+    }
+
+    const offers: Offer[] = entries.items.map((item) => {
+      const { name, order, intro, text, image, logoDachverband, urlDachverband } = item.fields;
+
+      if (!name || typeof order !== "number") {
+        throw new Error(`Pflichtfelder fehlen bei Angebot mit ID: ${item.sys.id}`);
+      }
+
+      return {
+        contentTypeId: item.sys.contentType.sys.id,
+        params: { slug: slug(name) },
+        props: {
+          slug: slug(name),
+          name,
+          order,
+          intro,
+          text,
+          image: image
+            ? {
+                url: image.fields?.file?.url ?? "",
+                description: image.fields?.description ?? "",
+              }
+            : undefined,
+          logo: logoDachverband
+            ? {
+                url: logoDachverband.fields?.file?.url ?? "",
+                description: logoDachverband.fields?.description ?? "",
+              }
+            : undefined,
+          link: urlDachverband
+            ? { url: urlDachverband }
+            : undefined,
+        },
+      };
+    });
+
+    return offers.sort((a, b) => a.props.order - b.props.order);
+
+  } catch (error) {
+    console.error("Fehler beim Abrufen der Angebote:", error);
+    throw new Error("Angebote konnten nicht geladen werden.");
+  }
 };
+
 
 export const getPages = async () => {
   const entries = await contentfulClient.getEntries<CFPage>({

@@ -1,9 +1,10 @@
 ---
-import { getTeamMembers } from "../../lib/API";
+import { getTeamMembers, getOffers } from "../../lib/API";
 import type { TeamMember } from "../../lib/types";
 import Base from "../../layouts/Base.astro";
 import PageHeader from "../../components/PageHeader.astro";
 import RichTextContainer from "../../components/RichTextContainer.astro";
+import OfferList from "../../components/OfferList.astro";
 
 export async function getStaticPaths() {
     const teamMembers: TeamMember[] = await getTeamMembers();
@@ -12,6 +13,17 @@ export async function getStaticPaths() {
 
 const { slug } = Astro.params;
 const { name, title, info, image, offer } = Astro.props;
+
+// console.log("Astro.props", Astro.props);
+const offers = await getOffers();
+// console.log(offer);
+
+const validOffers = Array.isArray(offer)
+  ? offers.filter((item) => offer.includes(item.props.name))
+  : [];
+
+
+console.log(validOffers);
 ---
 
 <Base>
@@ -21,5 +33,7 @@ const { name, title, info, image, offer } = Astro.props;
             <h2 class="text-center text-xl text-brand px-16 py-8" set:html={offer.join(" • ")} />
             <RichTextContainer class="p-4" content={info} />
         </article>
+
+        { validOffers.length > 0 && <OfferList offers={validOffers} />}
     </main>
 </Base>
