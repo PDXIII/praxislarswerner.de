@@ -45,8 +45,7 @@ const { id, data } = Astro.props;
   const initMap = () => {
     var center = [13.3799, 52.522];
 
-    mapboxgl.accessToken =
-      "pk.eyJ1IjoicGR4aWlpIiwiYSI6ImJqQkc3TDAifQ.EZmJJsZq2eymDWsPiPD-UQ";
+    mapboxgl.accessToken = import.meta.env.PUBLIC_MAPBOX_TOKEN;
     const map = new mapboxgl.Map({
       container: "map",
       style: "mapbox://styles/pdxiii/cjkydeowq398m2soa2jcaafqh",
