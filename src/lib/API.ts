@@ -16,6 +16,7 @@ interface CFTeamMember {
   fields: {
     name: EntryFieldTypes.Text;
     title: EntryFieldTypes.Text;
+    order: EntryFieldTypes.Number;
     info: EntryFieldTypes.RichText;
     offer: EntryFieldTypes.Array<string>;
     image?: {
@@ -29,11 +30,13 @@ interface CFTeamMember {
   };
 }
 
+
 interface CFOffer {
   contentTypeId: "offer";
   fields: {
     name: EntryFieldTypes.Text;
     intro: EntryFieldTypes.RichText;
+    order: EntryFieldTypes.Number;
     text: EntryFieldTypes.RichText;
     image?: {
       fields: {
@@ -121,6 +124,7 @@ export const getTeamMembers = async () => {
       props: {
         slug: slug(item.fields.name),
         name: item.fields.name,
+        order: item.fields.order,
         title: item.fields.title,
         info: item.fields.info,
         offer: item.fields.offer, // Fehler: "offer" ist nicht im Typ CFTeamMember definiert
@@ -132,10 +136,11 @@ export const getTeamMembers = async () => {
           : undefined,
       },
     };
+    // console.log(member);
     return member;
   });
 
-  return members;
+  return members.sort((a, b) => a.props.order - b.props.order);
 };
 
 export const getWisdoms = async () => {
@@ -185,6 +190,7 @@ export const getOffers = async () => {
       props: {
         slug: slug(item.fields.name),
         name: item.fields.name,
+        order: item.fields.order,
         intro: item.fields.intro,
         text: item.fields.text,
         image: item.fields.image
@@ -206,9 +212,10 @@ export const getOffers = async () => {
           : undefined,
       },
     };
+    // console.log(offer);
     return offer;
   });
-  return offers;
+  return offers.sort((a, b) => a.props.order - b.props.order);
 };
 
 export const getPages = async () => {

@@ -6,6 +6,7 @@ export type TeamMember = {
   props:{
     slug: string,
     name: string,
+    oder: number,
     title: string,
     info: any,
     offer: string[],
@@ -22,6 +23,7 @@ export type Offer = {
   props: {
     slug: string,
     name: string,
+    oder: number,
     intro: any,
     text: any,
     image?: {
