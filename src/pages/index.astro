@@ -11,6 +11,7 @@ import Base from "../layouts/Base.astro";
 import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
 import TeamList from "../components/TeamList.astro";
 import OfferList from "../components/OfferList.astro";
+import PartnerList from "../components/PartnerList.astro";
 import Map from "../components/Map.astro";
 import SectionHeader from "../components/SectionHeader.astro";
 import ContactForm from "../components/ContactForm.astro";
@@ -57,24 +58,6 @@ const partners: Partner[] = await getPartners();
       <RichTextContainer class="p-4 text-center" content={landingPage.contactText} />
       <ContactForm />
     </section>
-    <section class="p-4 mb-8 xl:container mx-auto">
-      <SectionHeader title="Unsere Partner" id="partners" />
-      <ul class="flex flex-wrap justify-around font-smallCaps text-lg">
-        {
-          partners.map((item, index) => (
-            <>
-              <li>
-                <a
-                  class="hover:underline underline-offset-4 text-brand"
-                  href={item.props.link}
-                  set:html={item.props.name}
-                />
-              </li>
-              {index < partners.length - 1 && <span> • </span>}
-            </>
-          ))
-        }
-      </ul>
-    </section>
+    <PartnerList partners={partners} />
   </main>
 </Base>

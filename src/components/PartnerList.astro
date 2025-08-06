@@ -1,0 +1,23 @@
+---
+import SectionHeader from "./SectionHeader.astro";
+const { partners } = Astro.props;
+---
+
+<section class="p-4 mb-8 xl:container mx-auto">
+  <SectionHeader title="Unsere Partner" id="partners" />
+  <ul
+    class=" columns-1 w-full sm:columns-2 md:columns-3 gap-4 space-y-4 text-center font-smallCaps text-lg"
+  >
+    {
+      partners.map((item, index) => (
+        <li key={index}>
+          <a
+            class="block break-inside-avoid p-2 bg-brand text-white hover:underline underline-offset-4"
+            href={item.props.link}
+            set:html={item.props.name}
+          />
+        </li>
+      ))
+    }
+  </ul>
+</section>
