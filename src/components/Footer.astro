@@ -27,11 +27,11 @@ const quote = wisdoms[getRandomInteger(0, wisdoms.length - 1)];
 
 <footer class="text-center bg-brand text-white md:grid grid-cols-3">
   <div class="p-4 col-span-2">
-    <blockquote class="p-4 font-primaryExtraLight italic text-xl md:text-2xl text-left">
-      <span class="not-italic text-3xl md:text-4xl">»</span>
+    <blockquote class="p-4 font-primaryExtraLight text-xl md:text-2xl text-left">
+      <span class="text-3xl md:text-4xl">»</span>
       {quote.props.quote}
     </blockquote>
-    <p class="text-right font-smallCapsLight">—{quote.props.author}</p>
+    <p class="text-right font-smallCapsLight">— {quote.props.author}</p>
   </div>
   <nav class="p-4">
     <ul class="pt-3 md:pt-0 md:ps-2 border-t md:border-t-0 md:border-s border-white md:text-left font-smallCaps lowercase tracking-wider">

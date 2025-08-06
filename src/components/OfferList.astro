@@ -6,12 +6,12 @@ const { offers } = Astro.props;
 
 <section class="container mx-auto px-4 mb-8">
   <SectionHeader title="Therapien" id="therapy" />
-  <ul class="mx-auto">
+  <ul class="mx-auto max-w-lg">
     {
       offers.map((item, index) => (
         <li class="mb-8">
           <a class="group" href={`/angebot/${item.props.slug}`}>
-            <article class="relative sm:grid grid-cols-3 overflow-hidden sm:mb-0 group-hover:shadow-lg transition-all group-hover:scale-105">
+            <article class="relative grid grid-cols-3 overflow-hidden mb-0 group-hover:shadow-lg transition-all group-hover:scale-105">
               <div class={`
                 col-span-2 h-full bg-brand flex flex-col justify-center 
                 ${index % 2 !== 0 ? "order-1 text-right" : "order-2"}
@@ -21,9 +21,9 @@ const { offers } = Astro.props;
                   set:html={item.props.name}
                 />
                 <div
-                  class="absolute bg-white/80 w-full h-full px-8 top-24 group-hover:top-0 z-10 right-0 opacity-0 group-hover:opacity-100 pt-28 group-hover:pt-8  transition-all text-left">
+                  class="absolute bg-white w-full h-full px-8 top-24 group-hover:top-0 z-10 right-0 opacity-0 group-hover:opacity-100 pt-28 group-hover:pt-8  transition-all text-left">
                     <h3 class="text-xl font-smallCapsBold tracking-wider text-brand">{item.props.name}</h3>
-                    <br>
+                    
                     <div class="relative" set:html={documentToHtmlString(item.props.intro)}/>
                 </div>
               </div>  
