@@ -10,6 +10,7 @@ import type {
   LandingPage,
 } from "../lib/types";
 import { slug } from "github-slugger";
+import type { info } from "sass-embedded";
 
 interface CFTeamMember {
   contentTypeId: "teamMember";
@@ -17,7 +18,8 @@ interface CFTeamMember {
     name: EntryFieldTypes.Text;
     title: EntryFieldTypes.Text;
     order: EntryFieldTypes.Number;
-    info: EntryFieldTypes.RichText;
+    bio: EntryFieldTypes.RichText;
+    info: EntryFieldTypes.Text;
     offer: EntryFieldTypes.Array<string>;
     image?: {
       fields: {
@@ -35,8 +37,8 @@ interface CFOffer {
   contentTypeId: "offer";
   fields: {
     name: EntryFieldTypes.Text;
-    intro: EntryFieldTypes.RichText;
     order: EntryFieldTypes.Number;
+    info: EntryFieldTypes.Text;
     text: EntryFieldTypes.RichText;
     image?: {
       fields: {
@@ -107,6 +109,7 @@ interface CFLandingPage {
   contentTypeId: "landingPage";
   fields: {
     name: EntryFieldTypes.Text;
+    info: EntryFieldTypes.Text;
     introText: EntryFieldTypes.RichText;
     contactText: EntryFieldTypes.RichText;
   };
@@ -123,7 +126,7 @@ export const getTeamMembers = async (): Promise<TeamMember[]> => {
     }
 
     const members: TeamMember[] = entries.items.map((item) => {
-      const { name, order, title, info, offer, image } = item.fields;
+      const { name, order, title, info, bio, offer, image } = item.fields;
 
       if (!name || typeof order !== "number") {
         throw new Error(`Pflichtfelder fehlen bei Team-Mitglied mit ID: ${item.sys.id}`);
@@ -133,10 +136,10 @@ export const getTeamMembers = async (): Promise<TeamMember[]> => {
         contentTypeId: item.sys.contentType.sys.id,
         params: { slug: slug(name) },
         props: {
-          slug: slug(name),
           name,
           order,
           title,
+          bio,
           info,
           offer,
           image: image
@@ -204,7 +207,7 @@ export const getOffers = async (): Promise<Offer[]> => {
     }
 
     const offers: Offer[] = entries.items.map((item) => {
-      const { name, order, intro, text, image, logoDachverband, urlDachverband } = item.fields;
+      const { name, order, intro, info, text, image, logoDachverband, urlDachverband } = item.fields;
 
       if (!name || typeof order !== "number") {
         throw new Error(`Pflichtfelder fehlen bei Angebot mit ID: ${item.sys.id}`);
@@ -217,7 +220,7 @@ export const getOffers = async (): Promise<Offer[]> => {
           slug: slug(name),
           name,
           order,
-          intro,
+          info,
           text,
           image: image
             ? {

@@ -28,7 +28,7 @@ const offers: Offer[] = await getOffers();
 const partners: Partner[] = await getPartners();
 ---
 
-<Base>
+<Base title={settings.data.subtitle} description={landingPage.info} slug="" image={landingPage.slideshowImages[0].fields.file.url} >
     <header class="w-screen h-screen relative">
       <Slideshow images={landingPage.slideshowImages} />
       <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 text-shadow-lg text-center">

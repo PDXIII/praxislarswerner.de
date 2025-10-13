@@ -12,7 +12,7 @@ export async function getStaticPaths() {
 }
 
 const { slug } = Astro.params;
-const { name, title, info, image, offer } = Astro.props;
+const { name, title, bio, info, image, offer } = Astro.props;
 
 // console.log("Astro.props", Astro.props);
 const offers = await getOffers();
@@ -26,12 +26,12 @@ const validOffers = Array.isArray(offer)
 console.log(validOffers);
 ---
 
-<Base>
+<Base title={name} description={info} slug={slug} image={image.url} >
     <main>
         <article>
             <PageHeader name={name} title={title} image={image} />
             <h2 class="text-center text-xl text-brand px-16 py-8" set:html={offer.join(" • ")} />
-            <RichTextContainer class="p-4" content={info} />
+            <RichTextContainer class="p-4" content={bio} />
         </article>
 
         { validOffers.length > 0 && <OfferList offers={validOffers} />}

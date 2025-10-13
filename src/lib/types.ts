@@ -8,7 +8,8 @@ export type TeamMember = {
     name: string,
     oder: number,
     title: string,
-    info: any,
+    bio: any,
+    info:any,
     offer: string[],
     image: {
       url: string,
@@ -24,7 +25,7 @@ export type Offer = {
     slug: string,
     name: string,
     oder: number,
-    intro: any,
+    info:any,
     text: any,
     image?: {
       url: string,
@@ -48,7 +49,7 @@ export type Page = {
     slug: string,
     name: string,
     text: any,
-    info: any,
+    info:any,
     image?: {
       url: string,
      description: string,
@@ -85,6 +86,7 @@ export type LandingPage = {
     slug: string,
     name: string,
     introText: any,
+    info:any,
     contactText: any,
   }
 }

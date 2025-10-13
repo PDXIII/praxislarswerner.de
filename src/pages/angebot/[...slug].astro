@@ -14,15 +14,14 @@ export async function getStaticPaths() {
 const team = await getTeamMembers();
 
 const { slug } = Astro.params;
-const { name, intro, text, image, logo, link } = Astro.props;
+const { name, text, info, image, logo, link } = Astro.props;
 
 const therapists = team.filter((item) => item.props.offer.includes(name));
 
 // console.log(therapists);
 ---
 
-<Base>
-  <main>
+<Base title={name} description={info} slug={slug} image={image.url} >  <main>
     <article>
       <PageHeader name={name} image={image} />
       <RichTextContainer class="p-4" content={text} />

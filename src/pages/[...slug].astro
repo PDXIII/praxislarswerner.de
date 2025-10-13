@@ -14,7 +14,7 @@ const { slug } = Astro.params;
 const { name, text, image, info } = Astro.props;
 ---
 
-<Base>
+<Base title={name} description={info} slug={slug} image={image.url} >
   <main>
     <article>
       <PageHeader name={name} title={name} image={image} />
