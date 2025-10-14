@@ -184,7 +184,7 @@ export const getPages = async (): Promise<Page[]> => {
         text,
         info,
         image: image
-          ? { url: image.fields.url, description: image.fields.description }
+          ? { url: image.fields.file.url, description: image.fields.description }
           : undefined,
       },
     };
