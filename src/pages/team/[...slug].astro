@@ -12,7 +12,7 @@ export async function getStaticPaths() {
 }
 
 const { slug } = Astro.params;
-const { name, title, bio, info, image, offer } = Astro.props;
+const { name, title, bio, image, offer } = Astro.props;
 
 // console.log("Astro.props", Astro.props);
 const offers = await getOffers();
@@ -26,7 +26,7 @@ const validOffers = Array.isArray(offer)
 console.log(validOffers);
 ---
 
-<Base title={name} description={info} slug={slug} image={image.url} >
+<Base>
     <main>
         <article>
             <PageHeader name={name} title={title} image={image} />

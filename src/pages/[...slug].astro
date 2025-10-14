@@ -1,5 +1,5 @@
 ---
-import { getPages } from "../lib/API";
+import { getPages, getConfigByID } from "../lib/API";
 import type { Page } from "../lib/types";
 import Base from "../layouts/Base.astro";
 import PageHeader from "../components/PageHeader.astro";
@@ -12,14 +12,25 @@ export async function getStaticPaths() {
 
 const { slug } = Astro.params;
 const { name, text, image, info } = Astro.props;
+
+// Settings laden
+const settings = await getConfigByID("5eUmE4yWNEM9xNibICQaWh");
+const brand = `${settings.data.prefix} ${settings.data.owner}`;
+const domain = settings.data.domain;
 ---
 
-<Base title={name} description={info} slug={slug} image={image.url} >
+<Base
+  title={name}
+  description={info}
+  slug={slug}
+  image={image?.url}
+  brand={brand}
+  domain={domain}
+>
   <main>
     <article>
       <PageHeader name={name} title={name} image={image} />
       <RichTextContainer class="p-4" content={text} />
     </article>
   </main>
-  
 </Base>

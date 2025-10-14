@@ -9,7 +9,7 @@ const { teamMembers } = Astro.props;
     {
       teamMembers.map((item) => (
         <li>
-          <a class="group" href={`/team/${item.props.slug}`}>
+          <a class="group" href={`/team/${item.params.slug}`}>
             <article class="grid grid-cols-2 group-hover:shadow-lg transition-all group-hover:scale-105">
               <img
                 src={item.props.image.url}

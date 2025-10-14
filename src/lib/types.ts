@@ -4,7 +4,7 @@ export type TeamMember = {
   contentTypeId: "teamMember",
   params: { slug: string },
   props:{
-    slug: string,
+    // slug: string,
     name: string,
     oder: number,
     title: string,
@@ -22,7 +22,7 @@ export type Offer = {
   contentTypeId: "offer",
   params: { slug: string },
   props: {
-    slug: string,
+    // slug: string,
     name: string,
     oder: number,
     info:any,
@@ -46,7 +46,7 @@ export type Page = {
   contentTypeId: "page",
   params: { slug: string} ,
   props: {
-    slug: string,
+    // slug: string,
     name: string,
     text: any,
     info:any,
@@ -83,7 +83,7 @@ export type LandingPage = {
   contentTypeId: "landingPage",
   params: { slug: string },
   props: {
-    slug: string,
+    // slug: string,
     name: string,
     introText: any,
     info:any,

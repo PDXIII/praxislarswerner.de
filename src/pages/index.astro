@@ -7,8 +7,8 @@ import {
   getLandingPage,
 } from "../lib/API";
 import type { TeamMember, Offer, Partner } from "../lib/types";
+
 import Base from "../layouts/Base.astro";
-import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
 import TeamList from "../components/TeamList.astro";
 import OfferList from "../components/OfferList.astro";
 import PartnerList from "../components/PartnerList.astro";
@@ -18,43 +18,57 @@ import ContactForm from "../components/ContactForm.astro";
 import RichTextContainer from "../components/RichTextContainer.astro";
 import Slideshow from "../components/Slideshow.astro";
 
-const landingPage = await getLandingPage();
+// 🚀 Alle API-Calls gleichzeitig starten
+const [
+  landingPage,
+  teamMembers,
+  offers,
+  partners,
+  settings
+] = await Promise.all([
+  getLandingPage(),
+  getTeamMembers(),
+  getOffers(),
+  getPartners(),
+  getConfigByID("5eUmE4yWNEM9xNibICQaWh")
+]);
 
-const teamMembers: TeamMember[] = await getTeamMembers();
-
-const settings = await getConfigByID("5eUmE4yWNEM9xNibICQaWh");
-
-const offers: Offer[] = await getOffers();
-const partners: Partner[] = await getPartners();
+const { data } = settings;
+const title = `${data.title} – ${data.subtitle}`;
+const description = landingPage.info || data.subtitle;
+const image = landingPage.slideshowImages?.[0]?.fields?.file?.url;
 ---
-
-<Base title={settings.data.subtitle} description={landingPage.info} slug="" image={landingPage.slideshowImages[0].fields.file.url} >
-    <header class="w-screen h-screen relative">
-      <Slideshow images={landingPage.slideshowImages} />
-      <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 text-shadow-lg text-center">
-        <h1
+<Base
+  title={title}
+  description={description}
+  slug=""
+  image={image}
+  domain={data.domain}
+>
+  <header class="w-screen h-screen relative">
+    <Slideshow images={landingPage.slideshowImages} />
+    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 text-shadow-lg text-center">
+      <h1
         class="prefix lowercase text-xl font-smallCaps leading-none text-brand tracking-wider drop-shadow-lg"
-        set:html={settings.data.prefix}
-        />
-        <h1 class="title min-w-52 font-smallCapsBold text-2xl sm:text-4xl text-brand tracking-wider mb-2 drop-shadow-xl">
-          <span class="border-brand px-4  sm:px-8 border-b-2"> {settings.data.owner}</span>
-        </h1>
-        <p class="subtitle font-primary text-lg  sm:text-xl" set:html={settings.data.subtitle} />
-      </div>
-    </header>
-  <main>
-     <RichTextContainer class="p-4 text-center" content={landingPage.introText} />
-    <!-- TEAM -->
-    <TeamList teamMembers={teamMembers} />
+        set:html={data.prefix}
+      />
+      <h1 class="title min-w-52 font-smallCapsBold text-2xl sm:text-4xl text-brand tracking-wider mb-2 drop-shadow-xl">
+        <span class="border-brand px-4 sm:px-8 border-b-2">{data.owner}</span>
+      </h1>
+      <p
+        class="subtitle font-primary text-lg sm:text-xl"
+        set:html={data.subtitle}
+      />
+    </div>
+  </header>
 
-    <!-- END TEAM -->
-    <!-- ANGEBOT -->
-     <OfferList offers={offers} />
-   
-    <!-- END ANGEBOT -->
+  <main>
+    <RichTextContainer class="p-4 text-center" content={landingPage.introText} />
+    <TeamList teamMembers={teamMembers} />
+    <OfferList offers={offers} />
     <section class="mb-8">
       <SectionHeader title="Kontakt" id="contact" />
-      <Map id="map" data={settings.data} />
+      <Map id="map" data={data} />
       <RichTextContainer class="p-4 text-center" content={landingPage.contactText} />
       <ContactForm />
     </section>
