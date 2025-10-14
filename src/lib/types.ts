@@ -103,5 +103,6 @@ export type LandingPage = {
     introText: EntryFieldTypes.RichText;
     info: EntryFieldTypes.Text;
     contactText: EntryFieldTypes.RichText;
+    slideshowImages?: { url: string }[];
   };
 };

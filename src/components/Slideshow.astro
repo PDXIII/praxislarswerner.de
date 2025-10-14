@@ -1,18 +1,43 @@
 ---
-const { images } = Astro.props;
+interface ImageFile {
+  url: string;
+}
+
+interface ImageFields {
+  file: ImageFile;
+  description?: string;
+}
+
+interface Image {
+  fields: ImageFields;
+}
+
+interface Props {
+  images?: Image[];
+}
+
+const { images = [] } = Astro.props as Props;
 ---
 
-<div class="-mt-14  relative h-full w-full aspect-[16/9] overflow-hidden">
+<div class="-mt-14 relative h-full w-full aspect-[16/9] overflow-hidden">
   {
-    images.map((image, index) => (
-      <img
-        src={image.fields.file.url}
-        alt={image.fields.description}
-        class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"
-        style={`opacity: ${index === 0 ? 1 : 0}`}
-        data-carousel-item
-      />
-    ))
+    images.length > 0 ? (
+      images.map((image, index) => (
+        image?.fields?.file?.url ? (
+          <img
+            src={image.fields.file.url}
+            alt={image.fields.description || ""}
+            class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"
+            style={`opacity: ${index === 0 ? 1 : 0}`}
+            data-carousel-item
+          />
+        ) : null
+      ))
+    ) : (
+      <div class="flex items-center justify-center w-full h-full bg-gray-200 text-gray-600">
+        Kein Bildmaterial vorhanden
+      </div>
+    )
   }
 </div>
 
@@ -26,8 +51,10 @@ const { images } = Astro.props;
     });
   }
 
-  setInterval(() => {
-    current = (current + 1) % slides.length;
-    showSlide(current);
-  }, 10000); // alle 10 Sekunden
+  if (slides.length > 0) {
+    setInterval(() => {
+      current = (current + 1) % slides.length;
+      showSlide(current);
+    }, 10000); // alle 10 Sekunden
+  }
 </script>

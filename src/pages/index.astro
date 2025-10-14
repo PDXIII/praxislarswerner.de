@@ -33,12 +33,13 @@ const { data } = settings;
 // Metadaten für Base
 const title = `${data.title} – ${data.subtitle}`;
 const description = landingPage.info || data.subtitle;
-const image = landingPage.slideshowImages?.[0]?.fields?.file?.url || "";
+const image = landingPage.props.slideshowImages?.[0]?.fields?.file?.url || "";
 const domain = data.domain;
+
 ---
 <Base title={title} description={description} slug="" image={image} domain={domain} brand={`${data.prefix} ${data.owner}`}>
   <header class="w-screen h-screen relative">
-    <Slideshow images={landingPage.slideshowImages} />
+    <Slideshow images={landingPage.props.slideshowImages} />
     <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 text-shadow-lg text-center">
       <h1 class="prefix lowercase text-xl font-smallCaps leading-none text-brand tracking-wider drop-shadow-lg" set:html={data.prefix} />
       <h1 class="title min-w-52 font-smallCapsBold text-2xl sm:text-4xl text-brand tracking-wider mb-2 drop-shadow-xl">

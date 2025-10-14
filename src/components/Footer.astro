@@ -1,49 +1,62 @@
 ---
-import { getConfigByID } from "../lib/API";
-import { Icon } from "astro-icon/components";
+import { getConfigByID, getWisdoms } from "../lib/API";
+import type { Config, Wisdom } from "../lib/types";
 
-const navigation = await getConfigByID("14812i6b0KLxGsHx9jNlfv");
+// ⚡ Daten von Contentful laden
+const navigation: Config = await getConfigByID("14812i6b0KLxGsHx9jNlfv");
+const wisdoms: Wisdom[] = await getWisdoms();
+
+// ⚡ Zufallszahl-Generator
+function getRandomInteger(min: number, max: number): number {
+  if (min > max) return -1;
+  if (min === max) return min;
+
+  let r;
+  do {
+    r = Math.random();
+  } while (r === 1.0);
+
+  return min + Math.floor(r * (max - min + 1));
+}
+
+// ⚡ Zufälliges Zitat auswählen (fallback bei leeren Daten)
+const quote = wisdoms.length > 0
+  ? wisdoms[getRandomInteger(0, wisdoms.length - 1)]
+  : { props: { quote: "Kein Zitat gefunden", author: "" } };
 ---
 
-<nav
-  class="fixed bottom-0 md:bottom-auto md:top-0 w-full inset-shadow-sm md:inset-shadow-none md:shadow-md px-4 bg-white/80 text-brand font-smallCaps tracking-wider text-sm md:text-xl lowercase z-50"
->
-  <ul class="hidden md:flex justify-end">
-    {
-      navigation.data
-        .filter((item) => {
-          return item.visible.includes("big");
-        })
-        .map((item) => (
-          <li class="">
-            <a
-              class="leading-6 block p-4 hover:bg-brand hover:text-white transition-all drop-shadow-sm"
-              href={item.link}
-            >
-              {item.name}
-            </a>
-          </li>
-        ))
-    }
-  </ul>
-  <ul class="md:hidden flex">
-    {
-      navigation.data
-        .filter((item) => {
-          return item.visible.includes("small");
-        })
-        .map((item) => (
-          <li class="grow">
-            <a
-              class="flex flex-col items-center  leading-6 block p-4 hover:bg-brand hover:text-white transition-all drop-shadow-sm"
-              href={item.link}
-            >
-              <Icon name={item.icon} class="w-6 h-6" />
+<footer class="text-center bg-brand text-white md:grid grid-cols-3">
+  <!-- Zitat -->
+  <div class="p-4 col-span-2">
+    <blockquote class="p-4 font-primaryExtraLight text-xl md:text-2xl text-left">
+      <span class="text-3xl md:text-4xl">»</span>
+      {quote.props.quote}
+    </blockquote>
+    <p class="text-right font-smallCapsLight">— {quote.props.author}</p>
+  </div>
 
-              {item.name}
-            </a>
-          </li>
-        ))
-    }
-  </ul>
-</nav>
+  <!-- Navigation -->
+  <nav class="p-4">
+    <ul class="pt-3 md:pt-0 md:ps-2 border-t md:border-t-0 md:border-s border-white md:text-left font-smallCaps lowercase tracking-wider">
+      {
+        Array.isArray(navigation.data)
+          ? navigation.data.map((item: any) => (
+              <li>
+                <a
+                  class="block px-4 py-1 hover:underline underline-offset-4 hover:bg-black/10"
+                  href={item.link}
+                >
+                  {item.name}
+                </a>
+              </li>
+            ))
+          : <li>Keine Navigation gefunden</li>
+      }
+    </ul>
+  </nav>
+
+  <!-- Copyright -->
+  <p class="p-4 border-t border-white col-span-3 font-smallCapsLight tracking-wider">
+    © {new Date().getFullYear()} Praxis Lars Werner • Mit &#9829; jemacht!
+  </p>
+</footer>

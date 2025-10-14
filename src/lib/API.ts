@@ -2,7 +2,15 @@
 import { contentfulClient } from "./contentful";
 import { slug } from "github-slugger";
 import type { EntryFieldTypes } from "contentful";
-import type { TeamMember, Offer, Page, Partner, Config, Wisdom, LandingPage } from "./types";
+import type {
+  TeamMember,
+  Offer,
+  Page,
+  Partner,
+  Config,
+  Wisdom,
+  LandingPage,
+} from "./types";
 
 // -------------------------
 // Interfaces für Contentful
@@ -48,7 +56,9 @@ interface CFPage {
     name: EntryFieldTypes.Text;
     text: EntryFieldTypes.RichText;
     info: EntryFieldTypes.RichText;
-    image?: { fields: { url: EntryFieldTypes.Text; description: EntryFieldTypes.Text } };
+    image?: {
+      fields: { url: EntryFieldTypes.Text; description: EntryFieldTypes.Text };
+    };
   };
 }
 
@@ -74,7 +84,9 @@ interface CFLandingPage {
     info: EntryFieldTypes.Text;
     introText: EntryFieldTypes.RichText;
     contactText: EntryFieldTypes.RichText;
-    slideshowImages?: Array<{ fields: { file: { url: EntryFieldTypes.Text } } }>;
+    slideshowImages?: Array<{
+      fields: { file: { url: EntryFieldTypes.Text } };
+    }>;
   };
 }
 
@@ -93,7 +105,9 @@ export async function cached<T>(key: string, fn: () => Promise<T>): Promise<T> {
 // TeamMember
 // -------------------------
 export const getTeamMembers = async (): Promise<TeamMember[]> => {
-  const entries = await contentfulClient.getEntries<CFTeamMember>({ content_type: "teamMember" });
+  const entries = await contentfulClient.getEntries<CFTeamMember>({
+    content_type: "teamMember",
+  });
   return entries.items.map((item) => {
     const { name, title, order, bio, info, offer, image } = item.fields;
     return {
@@ -107,7 +121,10 @@ export const getTeamMembers = async (): Promise<TeamMember[]> => {
         info,
         offer: offer.map((o) => String(o)), // ⚡ Array<Text> -> string[]
         image: image
-          ? { url: image.fields.file.url, description: image.fields.description }
+          ? {
+              url: image.fields.file.url,
+              description: image.fields.description,
+            }
           : undefined,
       },
     };
@@ -118,9 +135,12 @@ export const getTeamMembers = async (): Promise<TeamMember[]> => {
 // Offers
 // -------------------------
 export const getOffers = async (): Promise<Offer[]> => {
-  const entries = await contentfulClient.getEntries<CFOffer>({ content_type: "offer" });
+  const entries = await contentfulClient.getEntries<CFOffer>({
+    content_type: "offer",
+  });
   return entries.items.map((item) => {
-    const { name, order, info, text, image, logoDachverband, urlDachverband } = item.fields;
+    const { name, order, info, text, image, logoDachverband, urlDachverband } =
+      item.fields;
     return {
       contentTypeId: item.sys.contentType.sys.id,
       params: { slug: slug(name) },
@@ -129,8 +149,18 @@ export const getOffers = async (): Promise<Offer[]> => {
         order,
         info,
         text,
-        image: image ? { url: image.fields.file.url, description: image.fields.file.description } : undefined,
-        logo: logoDachverband ? { url: logoDachverband.fields.url, description: logoDachverband.fields.description } : undefined,
+        image: image
+          ? {
+              url: image.fields.file.url,
+              description: image.fields.file.description,
+            }
+          : undefined,
+        logo: logoDachverband
+          ? {
+              url: logoDachverband.fields.url,
+              description: logoDachverband.fields.description,
+            }
+          : undefined,
         link: urlDachverband ? { url: String(urlDachverband) } : undefined,
       },
     };
@@ -141,7 +171,9 @@ export const getOffers = async (): Promise<Offer[]> => {
 // Pages
 // -------------------------
 export const getPages = async (): Promise<Page[]> => {
-  const entries = await contentfulClient.getEntries<CFPage>({ content_type: "page" });
+  const entries = await contentfulClient.getEntries<CFPage>({
+    content_type: "page",
+  });
   return entries.items.map((item) => {
     const { name, text, info, image } = item.fields;
     return {
@@ -151,7 +183,9 @@ export const getPages = async (): Promise<Page[]> => {
         name,
         text,
         info,
-        image: image ? { url: image.fields.url, description: image.fields.description } : undefined,
+        image: image
+          ? { url: image.fields.url, description: image.fields.description }
+          : undefined,
       },
     };
   });
@@ -161,7 +195,9 @@ export const getPages = async (): Promise<Page[]> => {
 // Partner
 // -------------------------
 export const getPartners = async (): Promise<Partner[]> => {
-  const entries = await contentfulClient.getEntries<CFPartner>({ content_type: "associates" });
+  const entries = await contentfulClient.getEntries<CFPartner>({
+    content_type: "associates",
+  });
   return entries.items.map((item) => ({
     contentTypeId: item.sys.contentType.sys.id,
     props: { name: item.fields.name, link: item.fields.link },
@@ -173,14 +209,20 @@ export const getPartners = async (): Promise<Partner[]> => {
 // -------------------------
 export const getConfigByID = async (id: string): Promise<Config> => {
   const entry = await contentfulClient.getEntry<CFConfig>(id);
-  return { contentTypeId: entry.sys.contentType.sys.id, name: entry.fields.name, data: entry.fields.data };
+  return {
+    contentTypeId: entry.sys.contentType.sys.id,
+    name: entry.fields.name,
+    data: entry.fields.data,
+  };
 };
 
 // -------------------------
 // Wisdoms
 // -------------------------
 export const getWisdoms = async (): Promise<Wisdom[]> => {
-  const entries = await contentfulClient.getEntries<CFWisdom>({ content_type: "wisdom" });
+  const entries = await contentfulClient.getEntries<CFWisdom>({
+    content_type: "wisdom",
+  });
   return entries.items.map((item) => ({
     contentTypeId: item.sys.contentType.sys.id,
     props: { author: item.fields.author, quote: item.fields.quote },
@@ -200,6 +242,15 @@ export const getLandingPage = async (): Promise<LandingPage> => {
       info: entry.fields.info,
       introText: entry.fields.introText,
       contactText: entry.fields.contactText,
+      // ✅ Slideshow-Bilder in der korrekten Struktur für Slideshow.astro
+      slideshowImages: entry.fields.slideshowImages?.map((img) => ({
+        fields: {
+          file: {
+            url: img.fields.file.url,
+          },
+          description: img.fields.description ?? "",
+        },
+      })) ?? [],
     },
   };
 };
@@ -217,7 +268,9 @@ export const getPageByID = async (id: string): Promise<Page> => {
       name,
       text,
       info,
-      image: image ? { url: image.fields.url, description: image.fields.description } : undefined,
+      image: image
+        ? { url: image.fields.url, description: image.fields.description }
+        : undefined,
     },
   };
 };
