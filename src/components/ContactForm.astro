@@ -1,25 +1,56 @@
 ---
 import InputField from "./InputField.astro";
-
-interface ContactFormProps {}
-
-const props = Astro.props as ContactFormProps;
 ---
 
 <section>
   <form id="form" class="grid grid-cols-2 gap-8 prose mx-auto p-4" netlify>
     <InputField id="Vorname" label="Vorname" type="text" placeholder="Ihr Vorname" class="col-span-2 sm:col-span-1" />
     <InputField id="Nachname" label="Nachname" type="text" placeholder="Ihr Nachname" class="col-span-2 sm:col-span-1" />
-    <InputField id="email" label="E-Mail" type="email" placeholder="Ihre E-Mail Adresse" pattern="^[^@\s]+@[^@\s]+\.[^@\s]+$" class="col-span-2 sm:col-span-1" />
-    <InputField id="phone" label="Telefon" type="tel" placeholder="Ihre Telefonnummer" pattern="^[0-9+()\\s-]{6,}$" class="col-span-2 sm:col-span-1" />
+
+    <!-- E-Mail -->
+    <InputField
+      id="email"
+      label="E-Mail"
+      type="email"
+      placeholder="Ihre E-Mail Adresse"
+      
+      class="col-span-2 sm:col-span-1"
+    />
+
+    <!-- Telefon -->
+    <InputField
+      id="phone"
+      label="Telefon"
+      type="tel"
+      placeholder="Ihre Telefonnummer"
+      
+      class="col-span-2 sm:col-span-1"
+    />
 
     <div class="group col-span-2 flex flex-wrap">
-      <label class="w-30 font-smallCaps border border-brand border-b-0 tracking-wider text-brand group-focus-within:text-white group-focus-within:bg-brand p-2 transition-all" for="Nachricht">Nachricht</label>
-      <textarea id="message" name="Nachricht" cols="30" rows="10" placeholder="Ihre Nachricht an uns" class="w-full border border-1 border-brand p-2 outline-none"></textarea>
+      <label
+        class="w-30 font-smallCaps border border-brand border-b-0 tracking-wider text-brand group-focus-within:text-white group-focus-within:bg-brand p-2 transition-all"
+        for="Nachricht"
+      >
+        Nachricht
+      </label>
+      <textarea
+        id="message"
+        name="Nachricht"
+        cols="30"
+        rows="10"
+        placeholder="Ihre Nachricht an uns"
+        class="w-full border border-1 border-brand p-2 outline-none"
+      ></textarea>
     </div>
 
     <div class="col-span-2 flex justify-end">
-      <input id="contact-submit" type="submit" value="Senden" class="bg-brand text-white px-8 py-2 hover:underline transition-all hover:scale-105 hover:shadow-lg hover:underline-offset-4 font-smallCaps tracking-wider text-lg" />
+      <input
+        id="contact-submit"
+        type="submit"
+        value="Senden"
+        class="bg-brand text-white px-8 py-2 hover:underline transition-all hover:scale-105 hover:shadow-lg hover:underline-offset-4 font-smallCaps tracking-wider text-lg"
+      />
     </div>
   </form>
 </section>

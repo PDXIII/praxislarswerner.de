@@ -1,20 +1,31 @@
 ---
-
 interface Props {
-    id: string;
-    label: string;
-    type: string;
-    placeholder: string;
-    class?: string
-    pattern?: string
+  id: string;
+  label: string;
+  type: string;
+  placeholder: string;
+  class?: string;
+  pattern?: string;
 }
 const { id, label, type, placeholder, pattern, class: classList } = Astro.props;
 ---
 
-<div class={`group flex overflow-hidden  border-brand border ${classList || ""}`}>
-    <label class="basis-24 flex-shrink-0 font-smallCaps tracking-wider text-brand  group-focus-within:text-white group-focus-within:bg-brand p-2 transition-all " for={id}>
-        {label}
-    </label>
+<div
+  class={`group flex overflow-hidden  border-brand border ${classList || ""}`}
+>
+  <label
+    class="basis-24 flex-shrink-0 font-smallCaps tracking-wider text-brand group-focus-within:text-white group-focus-within:bg-brand p-2 transition-all"
+    for={id}
+  >
+    {label}
+  </label>
 
-    <input id={id} name={label} pattern={pattern}    class="flex-1 shrink-2 p-2 outline-none" type={type} placeholder={placeholder} />
+  <input
+    id={id}
+    name={label}
+    pattern={pattern}
+    class="flex-1 shrink-2 p-2 outline-none"
+    type={type}
+    placeholder={placeholder}
+  />
 </div>
