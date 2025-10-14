@@ -1,39 +1,59 @@
 ---
-import { getTeamMembers, getOffers } from "../../lib/API";
-import type { TeamMember } from "../../lib/types";
+import { getTeamMembers, getConfigByID, getOffers } from "../../lib/API";
+import type { TeamMember, Offer } from "../../lib/types";
 import Base from "../../layouts/Base.astro";
 import PageHeader from "../../components/PageHeader.astro";
 import RichTextContainer from "../../components/RichTextContainer.astro";
 import OfferList from "../../components/OfferList.astro";
 
 export async function getStaticPaths() {
-    const teamMembers: TeamMember[] = await getTeamMembers();
-    return teamMembers;
+  const teamMembers: TeamMember[] = await getTeamMembers();
+  return teamMembers.map((member) => ({ params: { slug: member.params.slug } }));
 }
 
 const { slug } = Astro.params;
-const { name, title, bio, image, offer } = Astro.props;
 
-// console.log("Astro.props", Astro.props);
-const offers = await getOffers();
-// console.log(offer);
+// Team-Mitglied, Settings und Angebote parallel laden
+const [members, settings, offers] = await Promise.all([
+  getTeamMembers(),
+  getConfigByID("5eUmE4yWNEM9xNibICQaWh"),
+  getOffers(),
+]);
 
-const validOffers = Array.isArray(offer)
-  ? offers.filter((item) => offer.includes(item.props.name))
+// Aktuelles Team-Mitglied finden
+const member: TeamMember | undefined = members.find((m) => m.params.slug === slug);
+
+if (!member) {
+  throw new Error(`Team-Mitglied für slug "${slug}" nicht gefunden`);
+}
+
+const { name, title, bio, info, image, offer } = member.props;
+
+// Settings entpacken
+const brand = `${settings.data.prefix} ${settings.data.owner}`;
+const domain = settings.data.domain;
+
+// Nur gültige Angebote für das Team-Mitglied
+const validOffers: Offer[] = Array.isArray(offer)
+  ? offers.filter((o) => offer.includes(o.props.name))
   : [];
-
-
-console.log(validOffers);
 ---
 
-<Base>
-    <main>
-        <article>
-            <PageHeader name={name} title={title} image={image} />
-            <h2 class="text-center text-xl text-brand px-16 py-8" set:html={offer.join(" • ")} />
-            <RichTextContainer class="p-4" content={bio} />
-        </article>
+<Base
+  title={name}
+  description={info}
+  slug={slug}
+  image={image?.url}
+  brand={brand}
+  domain={domain}
+>
+  <main>
+    <article>
+      <PageHeader name={name} title={title} image={image} />
+      {offer && <h2 class="text-center text-xl text-brand px-16 py-8" set:html={offer.join(" • ")} />}
+      <RichTextContainer class="p-4" content={bio} />
+    </article>
 
-        { validOffers.length > 0 && <OfferList offers={validOffers} />}
-    </main>
+    {validOffers.length > 0 && <OfferList offers={validOffers} />}
+  </main>
 </Base>

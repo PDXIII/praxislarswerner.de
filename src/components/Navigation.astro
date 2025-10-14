@@ -2,48 +2,47 @@
 import { getConfigByID } from "../lib/API";
 import { Icon } from "astro-icon/components";
 
-const navigation = await getConfigByID("14812i6b0KLxGsHx9jNlfv");
+interface NavigationItem {
+  name: string;
+  link: string;
+  visible: string[];
+  icon?: string;
+}
+
+const navigation = await getConfigByID("14812i6b0KLxGsHx9jNlfv") as { data: NavigationItem[] };
 ---
 
 <nav
   class="fixed bottom-0 md:bottom-auto md:top-0 w-full inset-shadow-sm md:inset-shadow-none md:shadow-md px-4 bg-white/80 text-brand font-smallCaps tracking-wider text-sm md:text-xl lowercase z-50"
 >
   <ul class="hidden md:flex justify-end">
-    {
-      navigation.data
-        .filter((item) => {
-          return item.visible.includes("big");
-        })
-        .map((item) => (
-          <li class="">
-            <a
-              class="leading-6 block p-4 hover:bg-brand hover:text-white transition-all drop-shadow-sm"
-              href={item.link}
-            >
-              {item.name}
-            </a>
-          </li>
-        ))
-    }
+    {navigation.data
+      .filter((item) => item.visible.includes("big"))
+      .map((item) => (
+        <li key={item.name}>
+          <a
+            class="leading-6 block p-4 hover:bg-brand hover:text-white transition-all drop-shadow-sm"
+            href={item.link}
+          >
+            {item.name}
+          </a>
+        </li>
+      ))}
   </ul>
-  <ul class="md:hidden flex">
-    {
-      navigation.data
-        .filter((item) => {
-          return item.visible.includes("small");
-        })
-        .map((item) => (
-          <li class="grow">
-            <a
-              class="flex flex-col items-center  leading-6 block p-4 hover:bg-brand hover:text-white transition-all drop-shadow-sm"
-              href={item.link}
-            >
-              <Icon name={item.icon} class="w-6 h-6" />
 
-              {item.name}
-            </a>
-          </li>
-        ))
-    }
+  <ul class="md:hidden flex">
+    {navigation.data
+      .filter((item) => item.visible.includes("small"))
+      .map((item) => (
+        <li class="grow" key={item.name}>
+          <a
+            class="flex flex-col items-center leading-6 block p-4 hover:bg-brand hover:text-white transition-all drop-shadow-sm"
+            href={item.link}
+          >
+            {item.icon && <Icon name={item.icon} class="w-6 h-6" />}
+            {item.name}
+          </a>
+        </li>
+      ))}
   </ul>
 </nav>

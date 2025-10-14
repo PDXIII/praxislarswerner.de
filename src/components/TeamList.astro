@@ -1,27 +1,38 @@
 ---
 import SectionHeader from "./SectionHeader.astro";
-const { teamMembers } = Astro.props;
+
+interface TeamMember {
+  params: { slug: string };
+  props: {
+    name: string;
+    title: string;
+    bio: string;
+    info: string;
+    offer: string[];
+    image: { url: string; description: string };
+  };
+}
+
+const { teamMembers } = Astro.props as { teamMembers: TeamMember[] };
 ---
 
 <section class="xl:container mx-auto px-4 mb-8">
-    <SectionHeader title="Team" id="team" />
+  <SectionHeader title="Team" id="team" />
   <ul class="grid sm:grid-cols-2 md:grid-cols-3 gap-8">
-    {
-      teamMembers.map((item) => (
-        <li>
-          <a class="group" href={`/team/${item.params.slug}`}>
-            <article class="grid grid-cols-2 group-hover:shadow-lg transition-all group-hover:scale-105">
-              <img
-                src={item.props.image.url}
-                alt={item.props.image.description}
+    {teamMembers.map((item) => (
+      <li>
+        <a class="group" href={`/team/${item.params.slug}`}>
+          <article class="grid grid-cols-2 group-hover:shadow-lg transition-all group-hover:scale-105">
+            <img src={item.props.image.url} alt={item.props.image.description} />
+            <div class="cols-span-1 flex flex-col justify-center p-3 bg-brand text-white">
+              <h3
+                class="group-hover:underline underline-offset-4 font-smallCaps tracking-wider text-lg"
+                set:html={item.props.name}
               />
-              <div class="cols-span-1 flex flex-col justify-center p-3 bg-brand text-white ">
-                <h3 class="group-hover:underline underline-offset-4 font-smallCaps tracking-wider text-lg" set:html={item.props.name} />
-              </div>
-            </article>
-          </a>
-        </li>
-      ))
-    }
+            </div>
+          </article>
+        </a>
+      </li>
+    ))}
   </ul>
 </section>
