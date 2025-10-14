@@ -1,25 +1,51 @@
 ---
-import { getPages } from "../lib/API";
+import { getPages, getConfigByID } from "../lib/API";
 import type { Page } from "../lib/types";
 import Base from "../layouts/Base.astro";
 import PageHeader from "../components/PageHeader.astro";
 import RichTextContainer from "../components/RichTextContainer.astro";
 
 export async function getStaticPaths() {
+  // Alle Pages laden und nur die Slugs für die Routen zurückgeben
   const pages: Page[] = await getPages();
-  return pages;
+  return pages.map((page) => ({ params: { slug: page.params.slug } }));
 }
 
 const { slug } = Astro.params;
-const { name, text, image, info } = Astro.props;
+
+// Alle Pages und Settings parallel laden
+const [pages, settings] = await Promise.all([
+  getPages(),
+  getConfigByID("5eUmE4yWNEM9xNibICQaWh"),
+]);
+
+// Aktuelle Seite anhand des Slugs finden
+const page: Page | undefined = pages.find((p) => p.params.slug === slug);
+
+if (!page) {
+  throw new Error(`Seite für slug "${slug}" nicht gefunden`);
+}
+
+// Page-Daten entpacken
+const { name, text, image, info } = page.props;
+
+// Settings entpacken
+const brand = `${settings.data.prefix} ${settings.data.owner}`;
+const domain = settings.data.domain;
 ---
 
-<Base title={name} description={info} slug={slug} image={image.url} >
+<Base
+  title={name}
+  description={info}
+  slug={slug}
+  image={image?.url}
+  brand={brand}
+  domain={domain}
+>
   <main>
     <article>
       <PageHeader name={name} title={name} image={image} />
       <RichTextContainer class="p-4" content={text} />
     </article>
   </main>
-  
 </Base>

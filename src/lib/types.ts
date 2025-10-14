@@ -1,92 +1,108 @@
+// src/lib/types.ts
+import type { EntryFieldTypes } from "contentful";
 
-
+// ------------------------------
+// Team-Mitglied
+// ------------------------------
 export type TeamMember = {
-  contentTypeId: "teamMember",
-  params: { slug: string },
-  props:{
-    slug: string,
-    name: string,
-    oder: number,
-    title: string,
-    bio: any,
-    info:any,
-    offer: string[],
-    image: {
-      url: string,
-      description: string
-    },
-  }
-}
+  contentTypeId: "teamMember";
+  params: { slug: string };
+  props: {
+    name: string;
+    order: number;
+    title: string;
+    bio: EntryFieldTypes.RichText;
+    info: EntryFieldTypes.RichText;
+    offer: string[];
+    image?: {
+      url: string;
+      description: string;
+    };
+  };
+};
 
+// ------------------------------
+// Angebot
+// ------------------------------
 export type Offer = {
-  contentTypeId: "offer",
-  params: { slug: string },
+  contentTypeId: "offer";
+  params: { slug: string };
   props: {
-    slug: string,
-    name: string,
-    oder: number,
-    info:any,
-    text: any,
+    name: string;
+    order: number;
+    info: EntryFieldTypes.RichText;
+    text: EntryFieldTypes.RichText;
     image?: {
-      url: string,
-      description?: string
-    }
+      url: string;
+    };
     logo?: {
-      url: string,
-      description?: string,
-    }
+      url: string;
+    };
     link?: {
-      url: string,
-    }
-  }
-}
+      url: string;
+    };
+  };
+};
 
-
+// ------------------------------
+// Seite
+// ------------------------------
 export type Page = {
-  contentTypeId: "page",
-  params: { slug: string} ,
+  contentTypeId: "page";
+  params: { slug: string };
   props: {
-    slug: string,
-    name: string,
-    text: any,
-    info:any,
+    name: string;
+    text: EntryFieldTypes.RichText;
+    info: EntryFieldTypes.RichText;
     image?: {
-      url: string,
-     description: string,
-    },
-  }
-}
+      url: string;
+      description: string;
+    };
+  };
+};
 
-export type Config = {
-  contentTypeId: "config",
-  name: string,
-  data: any,
-}
-
-export type Wisdom = {
-  contentTypeId: "wisdom",
-  props: {
-    author: string,
-    quote: string,
-  }
-}
-
+// ------------------------------
+// Partner
+// ------------------------------
 export type Partner = {
-  contentTypeId: "associates",
+  contentTypeId: "associates";
   props: {
-    name: string,
-    link: string
-  }
-}
+    name: string;
+    link: string;
+  };
+};
 
-export type LandingPage = {
-  contentTypeId: "landingPage",
-  params: { slug: string },
+// ------------------------------
+// Weisheit
+// ------------------------------
+export type Wisdom = {
+  contentTypeId: "wisdom";
   props: {
-    slug: string,
-    name: string,
-    introText: any,
-    info:any,
-    contactText: any,
-  }
-}
+    author: string;
+    quote: string;
+  };
+};
+
+// ------------------------------
+// Konfiguration
+// ------------------------------
+export type Config = {
+  contentTypeId: "config";
+  name: string;
+  data: EntryFieldTypes.Object;
+};
+
+// ------------------------------
+// LandingPage
+// ------------------------------
+export type LandingPage = {
+  contentTypeId: "landingPage";
+  params: { slug: string };
+  props: {
+    name: string;
+    introText: EntryFieldTypes.RichText;
+    info: EntryFieldTypes.Text;
+    contactText: EntryFieldTypes.RichText;
+    slideshowImages?: { url: string }[];
+  };
+};

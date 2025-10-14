@@ -1,17 +1,20 @@
-import { contentfulClient } from "../lib/contentful";
+// src/lib/API.ts
+import { contentfulClient } from "./contentful";
+import { slug } from "github-slugger";
 import type { EntryFieldTypes } from "contentful";
 import type {
   TeamMember,
   Offer,
-  Wisdom,
-  Partner,
   Page,
+  Partner,
   Config,
+  Wisdom,
   LandingPage,
-} from "../lib/types";
-import { slug } from "github-slugger";
-import type { info } from "sass-embedded";
+} from "./types";
 
+// -------------------------
+// Interfaces für Contentful
+// -------------------------
 interface CFTeamMember {
   contentTypeId: "teamMember";
   fields: {
@@ -19,65 +22,31 @@ interface CFTeamMember {
     title: EntryFieldTypes.Text;
     order: EntryFieldTypes.Number;
     bio: EntryFieldTypes.RichText;
-    info: EntryFieldTypes.Text;
-    offer: EntryFieldTypes.Array<string>;
+    info: EntryFieldTypes.RichText;
+    offer: EntryFieldTypes.Array<EntryFieldTypes.Text>; // ⚡ Text-Array
     image?: {
       fields: {
         description: EntryFieldTypes.Text;
-        file: {
-          url: EntryFieldTypes.Text;
-        };
+        file: { url: EntryFieldTypes.Text };
       };
     };
   };
 }
-
 
 interface CFOffer {
   contentTypeId: "offer";
   fields: {
     name: EntryFieldTypes.Text;
     order: EntryFieldTypes.Number;
-    info: EntryFieldTypes.Text;
+    info: EntryFieldTypes.RichText;
     text: EntryFieldTypes.RichText;
     image?: {
-      fields: {
-        file: {
-          url: EntryFieldTypes.Text;
-        };
-      };
+      fields: { url: EntryFieldTypes.Text; description?: EntryFieldTypes.Text };
     };
     logoDachverband?: {
-      fields: {
-        file: {
-          url: EntryFieldTypes.Text;
-        };
-      };
+      fields: { url: EntryFieldTypes.Text; description?: EntryFieldTypes.Text };
     };
     urlDachverband?: EntryFieldTypes.Text;
-  };
-}
-
-interface CFWisdom {
-  contentTypeId: "wisdom";
-  fields: {
-    author: EntryFieldTypes.Text;
-    quote: EntryFieldTypes.Text;
-  };
-}
-
-interface CFPartner {
-  contentTypeId: "associates";
-  fields: {
-    name: EntryFieldTypes.Text;
-    link: EntryFieldTypes.Text;
-  };
-}
-interface CFConfig {
-  contentTypeId: "config";
-  fields: {
-    name: EntryFieldTypes.Text;
-    data: EntryFieldTypes.Object;
   };
 }
 
@@ -85,24 +54,27 @@ interface CFPage {
   contentTypeId: "page";
   fields: {
     name: EntryFieldTypes.Text;
-    text: EntryFieldTypes.Text;
+    text: EntryFieldTypes.RichText;
     info: EntryFieldTypes.RichText;
     image?: {
-      fields: {
-        file: {
-          url: EntryFieldTypes.Text;
-        };
-      };
+      fields: { url: EntryFieldTypes.Text; description: EntryFieldTypes.Text };
     };
   };
 }
 
+interface CFPartner {
+  contentTypeId: "associates";
+  fields: { name: EntryFieldTypes.Text; link: EntryFieldTypes.Text };
+}
+
 interface CFConfig {
   contentTypeId: "config";
-  fields: {
-    name: EntryFieldTypes.Text;
-    data: EntryFieldTypes.Object;
-  };
+  fields: { name: EntryFieldTypes.Text; data: EntryFieldTypes.Object };
+}
+
+interface CFWisdom {
+  contentTypeId: "wisdom";
+  fields: { author: EntryFieldTypes.Text; quote: EntryFieldTypes.Text };
 }
 
 interface CFLandingPage {
@@ -112,186 +84,193 @@ interface CFLandingPage {
     info: EntryFieldTypes.Text;
     introText: EntryFieldTypes.RichText;
     contactText: EntryFieldTypes.RichText;
+    slideshowImages?: Array<{
+      fields: { file: { url: EntryFieldTypes.Text } };
+    }>;
   };
 }
 
+// -------------------------
+// Cache für wiederholte Calls
+// -------------------------
+const cache = new Map<string, any>();
+export async function cached<T>(key: string, fn: () => Promise<T>): Promise<T> {
+  if (cache.has(key)) return cache.get(key);
+  const result = await fn();
+  cache.set(key, result);
+  return result;
+}
+
+// -------------------------
+// TeamMember
+// -------------------------
 export const getTeamMembers = async (): Promise<TeamMember[]> => {
-  try {
-    const entries = await contentfulClient.getEntries<CFTeamMember>({
-      content_type: "teamMember",
-    });
-
-    if (!entries?.items) {
-      throw new Error("Contentful response enthält keine Team-Mitglieder.");
-    }
-
-    const members: TeamMember[] = entries.items.map((item) => {
-      const { name, order, title, info, bio, offer, image } = item.fields;
-
-      if (!name || typeof order !== "number") {
-        throw new Error(`Pflichtfelder fehlen bei Team-Mitglied mit ID: ${item.sys.id}`);
-      }
-
-      return {
-        contentTypeId: item.sys.contentType.sys.id,
-        params: { slug: slug(name) },
-        props: {
-          name,
-          order,
-          title,
-          bio,
-          info,
-          offer,
-          image: image
-            ? {
-                url: image.fields?.file?.url ?? "",
-                description: image.fields?.description ?? "",
-              }
-            : undefined,
-        },
-      };
-    });
-
-    return members.sort((a, b) => a.props.order - b.props.order);
-
-  } catch (error) {
-    console.error("Fehler beim Abrufen der Team-Mitglieder:", error);
-    throw new Error("Team-Mitglieder konnten nicht geladen werden.");
-  }
-};
-
-
-export const getWisdoms = async () => {
-  const entries = await contentfulClient.getEntries<CFWisdom>({
-    content_type: "wisdom",
+  const entries = await contentfulClient.getEntries<CFTeamMember>({
+    content_type: "teamMember",
   });
-  const wisdoms = entries.items.map((item: CFWisdom) => {
-    const wisdom = {
+  return entries.items.map((item) => {
+    const { name, title, order, bio, info, offer, image } = item.fields;
+    return {
       contentTypeId: item.sys.contentType.sys.id,
+      params: { slug: slug(name) },
       props: {
-        author: item.fields.author,
-        quote: item.fields.quote,
-      },
-    }
-    return wisdom;
-  })
-  return wisdoms;
-};
-
-
-export const getPartners = async () => {
-  const entries = await contentfulClient.getEntries<CFPartner>({
-    content_type: "associates",
-  });
-  const partners = entries.items.map((item: CFPartner) => {
-    const partner = {
-      contentTypeId: item.sys.contentType.sys.id,
-      props: {
-        name: item.fields.name,
-        link: item.fields.link,
-      },
-    }
-    return partner;
-  })
-  return partners;
-};
-
-export const getOffers = async (): Promise<Offer[]> => {
-  try {
-    const entries = await contentfulClient.getEntries<CFOffer>({
-      content_type: "offer",
-    });
-
-    if (!entries?.items) {
-      throw new Error("Contentful response enthält keine items.");
-    }
-
-    const offers: Offer[] = entries.items.map((item) => {
-      const { name, order, intro, info, text, image, logoDachverband, urlDachverband } = item.fields;
-
-      if (!name || typeof order !== "number") {
-        throw new Error(`Pflichtfelder fehlen bei Angebot mit ID: ${item.sys.id}`);
-      }
-
-      return {
-        contentTypeId: item.sys.contentType.sys.id,
-        params: { slug: slug(name) },
-        props: {
-          slug: slug(name),
-          name,
-          order,
-          info,
-          text,
-          image: image
-            ? {
-                url: image.fields?.file?.url ?? "",
-                description: image.fields?.description ?? "",
-              }
-            : undefined,
-          logo: logoDachverband
-            ? {
-                url: logoDachverband.fields?.file?.url ?? "",
-                description: logoDachverband.fields?.description ?? "",
-              }
-            : undefined,
-          link: urlDachverband
-            ? { url: urlDachverband }
-            : undefined,
-        },
-      };
-    });
-
-    return offers.sort((a, b) => a.props.order - b.props.order);
-
-  } catch (error) {
-    console.error("Fehler beim Abrufen der Angebote:", error);
-    throw new Error("Angebote konnten nicht geladen werden.");
-  }
-};
-
-
-export const getPages = async () => {
-  const entries = await contentfulClient.getEntries<CFPage>({
-    content_type: "page",
-  });
-
-  const pages: Page[] = entries.items.map((item: CFPage) => {
-    const page: Page = {
-      contentTypeId: item.sys.contentType.sys.id,
-      params: { slug: slug(item.fields.name) },
-      props: {
-        slug: slug(item.fields.name),
-        name: item.fields.name,
-        text: item.fields.text,
-        info: item.fields.info,
-        image: item.fields.image
+        name,
+        order,
+        title,
+        bio,
+        info,
+        offer: offer.map((o) => String(o)), // ⚡ Array<Text> -> string[]
+        image: image
           ? {
-              url: item.fields.image.fields.file.url,
-              description: item.fields.image.fields.description,
+              url: image.fields.file.url,
+              description: image.fields.description,
             }
           : undefined,
       },
     };
-    return page;
   });
-  return pages;
-
-
 };
 
-export const getLandingPage = async () => {
-  const page = await contentfulClient.getEntry<CFLandingPage>(
-    "xln036ds3i7CCHBhvaMVA"
-  );
-  return page.fields;
+// -------------------------
+// Offers
+// -------------------------
+export const getOffers = async (): Promise<Offer[]> => {
+  const entries = await contentfulClient.getEntries<CFOffer>({
+    content_type: "offer",
+  });
+  return entries.items.map((item) => {
+    const { name, order, info, text, image, logoDachverband, urlDachverband } =
+      item.fields;
+    return {
+      contentTypeId: item.sys.contentType.sys.id,
+      params: { slug: slug(name) },
+      props: {
+        name,
+        order,
+        info,
+        text,
+        image: image
+          ? {
+              url: image.fields.file.url,
+              description: image.fields.file.description,
+            }
+          : undefined,
+        logo: logoDachverband
+          ? {
+              url: logoDachverband.fields.url,
+              description: logoDachverband.fields.description,
+            }
+          : undefined,
+        link: urlDachverband ? { url: String(urlDachverband) } : undefined,
+      },
+    };
+  });
 };
 
-export const getPageByID = async (id: string) => {
-  const page = await contentfulClient.getEntry<CFPage>(id);
-  return page.fields;
+// -------------------------
+// Pages
+// -------------------------
+export const getPages = async (): Promise<Page[]> => {
+  const entries = await contentfulClient.getEntries<CFPage>({
+    content_type: "page",
+  });
+  return entries.items.map((item) => {
+    const { name, text, info, image } = item.fields;
+    return {
+      contentTypeId: item.sys.contentType.sys.id,
+      params: { slug: slug(name) },
+      props: {
+        name,
+        text,
+        info,
+        image: image
+          ? { url: image.fields.url, description: image.fields.description }
+          : undefined,
+      },
+    };
+  });
 };
 
-export const getConfigByID = async (id: string) => {
-  const config = await contentfulClient.getEntry<CFConfig>(id);
-  return config.fields;
+// -------------------------
+// Partner
+// -------------------------
+export const getPartners = async (): Promise<Partner[]> => {
+  const entries = await contentfulClient.getEntries<CFPartner>({
+    content_type: "associates",
+  });
+  return entries.items.map((item) => ({
+    contentTypeId: item.sys.contentType.sys.id,
+    props: { name: item.fields.name, link: item.fields.link },
+  }));
+};
+
+// -------------------------
+// Config
+// -------------------------
+export const getConfigByID = async (id: string): Promise<Config> => {
+  const entry = await contentfulClient.getEntry<CFConfig>(id);
+  return {
+    contentTypeId: entry.sys.contentType.sys.id,
+    name: entry.fields.name,
+    data: entry.fields.data,
+  };
+};
+
+// -------------------------
+// Wisdoms
+// -------------------------
+export const getWisdoms = async (): Promise<Wisdom[]> => {
+  const entries = await contentfulClient.getEntries<CFWisdom>({
+    content_type: "wisdom",
+  });
+  return entries.items.map((item) => ({
+    contentTypeId: item.sys.contentType.sys.id,
+    props: { author: item.fields.author, quote: item.fields.quote },
+  }));
+};
+
+// -------------------------
+// LandingPage
+// -------------------------
+export const getLandingPage = async (): Promise<LandingPage> => {
+  const entry = await contentfulClient.getEntry<CFLandingPage>("xln036ds3i7CCHBhvaMVA");
+  return {
+    contentTypeId: entry.sys.contentType.sys.id,
+    params: { slug: "" },
+    props: {
+      name: entry.fields.name,
+      info: entry.fields.info,
+      introText: entry.fields.introText,
+      contactText: entry.fields.contactText,
+      // ✅ Slideshow-Bilder in der korrekten Struktur für Slideshow.astro
+      slideshowImages: entry.fields.slideshowImages?.map((img) => ({
+        fields: {
+          file: {
+            url: img.fields.file.url,
+          },
+          description: img.fields.description ?? "",
+        },
+      })) ?? [],
+    },
+  };
+};
+
+// -------------------------
+// Single Page by ID
+// -------------------------
+export const getPageByID = async (id: string): Promise<Page> => {
+  const entry = await contentfulClient.getEntry<CFPage>(id);
+  const { name, text, info, image } = entry.fields;
+  return {
+    contentTypeId: entry.sys.contentType.sys.id,
+    params: { slug: slug(name) },
+    props: {
+      name,
+      text,
+      info,
+      image: image
+        ? { url: image.fields.url, description: image.fields.description }
+        : undefined,
+    },
+  };
 };

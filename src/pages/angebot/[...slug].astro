@@ -1,40 +1,63 @@
 ---
-import { getOffers, getTeamMembers } from "../../lib/API";
-import type { Offer } from "../../lib/types";
+import { getOffers, getConfigByID, getTeamMembers } from "../../lib/API";
+import type { Offer, TeamMember } from "../../lib/types";
 import Base from "../../layouts/Base.astro";
 import PageHeader from "../../components/PageHeader.astro";
 import RichTextContainer from "../../components/RichTextContainer.astro";
 import TeamList from "../../components/TeamList.astro";
 
+// 🚀 Korrekte getStaticPaths für dynamische Routen
 export async function getStaticPaths() {
   const offers: Offer[] = await getOffers();
-  return offers;
+
+  return offers.map((offer) => ({
+    params: { slug: offer.params.slug },
+  }));
 }
 
-const team = await getTeamMembers();
-
+// Aktueller Slug aus der URL
 const { slug } = Astro.params;
-const { name, text, info, image, logo, link } = Astro.props;
 
-const therapists = team.filter((item) => item.props.offer.includes(name));
+// Angebots-Daten, Team-Mitglieder und Settings parallel laden
+const [offers, teamMembers, settings] = await Promise.all([
+  getOffers(),
+  getTeamMembers(),
+  getConfigByID("5eUmE4yWNEM9xNibICQaWh"),
+]);
 
-// console.log(therapists);
+// Das aktuelle Angebot anhand des Slugs finden
+const offerItem: Offer | undefined = offers.find((o) => o.params.slug === slug);
+
+if (!offerItem) {
+  throw new Error(`Angebot für slug "${slug}" nicht gefunden`);
+}
+
+const { name, text, info, image } = offerItem.props;
+
+// Team-Mitglieder filtern, die dieses Angebot anbieten
+const therapists: TeamMember[] = teamMembers.filter((member) =>
+  Array.isArray(member.props.offer) && member.props.offer.includes(name)
+);
+
+// Settings entpacken
+const brand = `${settings.data.prefix} ${settings.data.owner}`;
+const domain = settings.data.domain;
 ---
 
-<Base title={name} description={info} slug={slug} image={image.url} >  <main>
+<Base
+  title={name}
+  description={info}
+  slug={slug}
+  image={image?.url}
+  brand={brand}
+  domain={domain}
+>
+  <main>
     <article>
-      <PageHeader name={name} image={image} />
+      <PageHeader name={name} title={name} image={image} />
       <RichTextContainer class="p-4" content={text} />
-      {
-        logo && link && (
-          <div class="w-full flex justify-center p-16">
-            <a class="mx-auto" href={link.url}>
-              <img class="w-64 h-auto" src={logo.url} alt={logo.description} />
-            </a>
-          </div>
-        )
-      }
     </article>
+
     {therapists.length > 0 && <TeamList teamMembers={therapists} />}
   </main>
 </Base>

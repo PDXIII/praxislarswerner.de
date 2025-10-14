@@ -1,31 +1,32 @@
 ---
 import { getConfigByID, getWisdoms } from "../lib/API";
+import type { Config, Wisdom } from "../lib/types";
 
-const navigation = await getConfigByID("14812i6b0KLxGsHx9jNlfv");
-const wisdoms = await getWisdoms();
+// ⚡ Daten von Contentful laden
+const navigation: Config = await getConfigByID("14812i6b0KLxGsHx9jNlfv");
+const wisdoms: Wisdom[] = await getWisdoms();
 
-function getRandomInteger(min, max) {
-  if (min > max) {
-    return -1;
-  }
+// ⚡ Zufallszahl-Generator
+function getRandomInteger(min: number, max: number): number {
+  if (min > max) return -1;
+  if (min === max) return min;
 
-  if (min === max) {
-    return min;
-  }
-
-  var r;
-
+  let r;
   do {
     r = Math.random();
   } while (r === 1.0);
 
-  return min + parseInt(r * (max - min + 1));
+  return min + Math.floor(r * (max - min + 1));
 }
 
-const quote = wisdoms[getRandomInteger(0, wisdoms.length - 1)];
+// ⚡ Zufälliges Zitat auswählen (fallback bei leeren Daten)
+const quote = wisdoms.length > 0
+  ? wisdoms[getRandomInteger(0, wisdoms.length - 1)]
+  : { props: { quote: "Kein Zitat gefunden", author: "" } };
 ---
 
 <footer class="text-center bg-brand text-white md:grid grid-cols-3">
+  <!-- Zitat -->
   <div class="p-4 col-span-2">
     <blockquote class="p-4 font-primaryExtraLight text-xl md:text-2xl text-left">
       <span class="text-3xl md:text-4xl">»</span>
@@ -33,17 +34,28 @@ const quote = wisdoms[getRandomInteger(0, wisdoms.length - 1)];
     </blockquote>
     <p class="text-right font-smallCapsLight">— {quote.props.author}</p>
   </div>
+
+  <!-- Navigation -->
   <nav class="p-4">
     <ul class="pt-3 md:pt-0 md:ps-2 border-t md:border-t-0 md:border-s border-white md:text-left font-smallCaps lowercase tracking-wider">
       {
-        navigation.data.map((item) => (
-          <li>
-            <a class="block px-4 py-1 hover:underline underline-offset-4 hover:bg-black/10" href={item.link}>{item.name}</a>
-          </li>
-        ))
+        Array.isArray(navigation.data)
+          ? navigation.data.map((item: any) => (
+              <li>
+                <a
+                  class="block px-4 py-1 hover:underline underline-offset-4 hover:bg-black/10"
+                  href={item.link}
+                >
+                  {item.name}
+                </a>
+              </li>
+            ))
+          : <li>Keine Navigation gefunden</li>
       }
     </ul>
   </nav>
+
+  <!-- Copyright -->
   <p class="p-4 border-t border-white col-span-3 font-smallCapsLight tracking-wider">
     © {new Date().getFullYear()} Praxis Lars Werner • Mit &#9829; jemacht!
   </p>
