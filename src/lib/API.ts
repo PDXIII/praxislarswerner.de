@@ -55,7 +55,7 @@ interface CFPage {
   fields: {
     name: EntryFieldTypes.Text;
     text: EntryFieldTypes.RichText;
-    info: EntryFieldTypes.RichText;
+    intro: EntryFieldTypes.RichText;
     image?: {
       fields: { url: EntryFieldTypes.Text; description: EntryFieldTypes.Text };
     };
@@ -170,19 +170,38 @@ export const getOffers = async (): Promise<Offer[]> => {
 // -------------------------
 // Pages
 // -------------------------
+
+export const getJobOffer = async (id: string): Promise<Page> => {
+  const entry = await contentfulClient.getEntry<CFPage>(id);
+  const { name, text, info, image } = entry.fields;
+  return {
+    contentTypeId: entry.sys.contentType.sys.id,
+    params: { slug: slug(name) },
+    props: {
+      name,
+      text,
+      info,
+      image: image
+        ? { url: image.fields.url, description: image.fields.description }
+        : undefined,
+    },
+  };
+};
+
+
 export const getPages = async (): Promise<Page[]> => {
   const entries = await contentfulClient.getEntries<CFPage>({
     content_type: "page",
   });
   return entries.items.map((item) => {
-    const { name, text, info, image } = item.fields;
+    const { name, text, intro, image } = item.fields;
     return {
       contentTypeId: item.sys.contentType.sys.id,
       params: { slug: slug(name) },
       props: {
         name,
         text,
-        info,
+        intro,
         image: image
           ? { url: image.fields.file.url, description: image.fields.description }
           : undefined,
@@ -259,18 +278,32 @@ export const getLandingPage = async (): Promise<LandingPage> => {
 // Single Page by ID
 // -------------------------
 export const getPageByID = async (id: string): Promise<Page> => {
-  const entry = await contentfulClient.getEntry<CFPage>(id);
-  const { name, text, info, image } = entry.fields;
-  return {
-    contentTypeId: entry.sys.contentType.sys.id,
-    params: { slug: slug(name) },
-    props: {
-      name,
-      text,
-      info,
-      image: image
-        ? { url: image.fields.url, description: image.fields.description }
-        : undefined,
-    },
-  };
+  // console.log('Fetching page with ID:', id);
+  
+  try {
+    const entry = await contentfulClient.getEntry<CFPage>(id);
+    // console.log('Entry received:', entry);
+    // console.log('Entry fields:', entry.fields);
+    
+    const { name, text, intro, image } = entry.fields;
+    
+    // console.log('Extracted fields:', { name, text, info, image });
+    
+    return {
+      contentTypeId: entry.sys.contentType.sys.id,
+      params: { slug: slug(name) },
+      sys: entry.sys,
+      props: {
+        name,
+        text,
+        intro,
+        image: image
+          ? { url: image.fields.url, description: image.fields.description }
+          : undefined,
+      },
+    };
+  } catch (error) {
+    console.error('Error fetching page:', error);
+    throw error;
+  }
 };
