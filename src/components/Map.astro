@@ -12,29 +12,40 @@ const { id, data } = Astro.props;
         class="prefix lowercase text-lg font-smallCaps leading-none text-brand tracking-wider"
         set:html={data.prefix}
       />
-      <h1 class="title font-smallCapsBold text-2xl text-brand tracking-wider mb-2">
+      <h1
+        class="title font-smallCapsBold text-2xl text-brand tracking-wider mb-2"
+      >
         <span class="border-brand px-4 border-b-2"> {data.owner}</span>
       </h1>
-      <p class="subtitle text-lg" set:html={data.subtitle} />
+      <!-- <p class="subtitle text-lg" set:html={data.subtitle} /> -->
     </header>
     <div class="contact font-primary text-center text-lg">
-      <a
-        href="tel:{data.phone}"
-        set:html={data.phone}
-        class="phone text-brand font-primaryRegular text-xl mb-2"
-      />
       <p>
         {data.address.street}
         <br />
         {data.address.postal}
         {data.address.city}
-        <br />
+      </p>
+      <a
+        href="tel:{data.phone}"
+        set:html={data.phone}
+        class="phone text-brand font-primaryRegular text-xl mb-2"
+      />
+      <p class="mt-3">
         <a
           href="mailto:{data.email}"
           set:html={data.email}
           class="email text-brand font-primaryRegular tracking-wider"
         />
       </p>
+      <!-- Navigations-Button: Öffnet die bevorzugte Navigations-App des Nutzers -->
+      <button
+        id="navigate-btn"
+        data-address={`${data.address.street}, ${data.address.postal} ${data.address.city}`}
+        class="mt-3 px-6 py-2 bg-white text-brand rounded-lg hover:opacity-90 transition-opacity font-smallCaps tracking-wider hover:underline-offset-4 hover:underline"
+      >
+        Navigation nutzen
+      </button>
     </div>
   </div>
 </div>
@@ -79,7 +90,63 @@ const { id, data } = Astro.props;
       .setPopup(popup)
       .addTo(map)
       .togglePopup();
-      
+
+    // Event Listener für den Navigations-Button im Popup
+
+    const navBtn = document.getElementById("navigate-btn");
+    if (navBtn) {
+      navBtn.addEventListener("click", (e) => {
+        // Holt die Adresse aus dem data-address Attribut
+        const address = e.target.getAttribute("data-address");
+        // Ruft die openNavigation Funktion mit Adresse und Koordinaten auf
+        openNavigation(address, center);
+      });
+    }
+  };
+
+  /**
+   * Öffnet die bevorzugte Navigations-App basierend auf dem Gerät des Nutzers
+   * @param {string} address - Die formatierte Adresse als String
+   * @param {array} coordinates - [longitude, latitude] Array der Zielkoordinaten
+   */
+  const openNavigation = (address, coordinates) => {
+    // Extrahiert Längen- und Breitengrad aus dem coordinates Array
+    const [lng, lat] = coordinates;
+    // Kodiert die Adresse für die URL (ersetzt Leerzeichen, Sonderzeichen etc.)
+    const encodedAddress = encodeURIComponent(address);
+
+    // Erkennung des Betriebssystems über den User Agent String
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isAndroid = /Android/.test(navigator.userAgent);
+    const isMac = /Macintosh|MacIntel|MacPPC|Mac68K/.test(navigator.userAgent);
+
+    let navigationUrl;
+
+    if (isIOS || isMac) {
+      // Apple Maps URL-Schema für iOS und macOS Geräte
+      // maps:// öffnet die native Karten-App auf macOS
+      // daddr = Zieladresse, q = Suchanfrage/Label für den Pin
+      navigationUrl = `maps://?daddr=${lat},${lng}&q=${encodedAddress}`;
+    } else if (isAndroid) {
+      // Google Maps App URL-Schema für Android
+      // Versucht zuerst die native App zu öffnen
+      navigationUrl = `google.navigation:q=${lat},${lng}`;
+      // Fallback zur Web-Version falls die App nicht installiert ist
+      // Timeout gibt der App 500ms Zeit zum Öffnen
+      setTimeout(() => {
+        window.open(
+          `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`,
+          "_blank"
+        );
+      }, 500);
+    } else {
+      // Fallback für Desktop und andere Geräte
+      // Öffnet Google Maps im Browser mit Routenplanung
+      navigationUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+    }
+
+    // Öffnet die Navigation in einem neuen Tab/Fenster oder der entsprechenden App
+    window.location.href = navigationUrl;
   };
 
   initMap();
