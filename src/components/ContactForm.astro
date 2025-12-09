@@ -5,7 +5,14 @@ import { Icon } from "astro-icon/components";
 
 <section>
   <!-- Formular: Wird bei Erfolg oder Fehler ausgeblendet -->
-  <form id="form" class="grid grid-cols-2 gap-8 prose mx-auto p-4" name="contact" netlify netlify-honeypot="bot-field" data-netlify="true">
+  <form
+    id="form"
+    class="grid grid-cols-2 gap-8 prose mx-auto p-4"
+    name="contact"
+    method="POST"
+    netlify-honeypot="bot-field"
+    data-netlify="true"
+  >
     <!-- Hidden fields für Netlify Forms -->
     <input type="hidden" name="form-name" value="contact" />
     <input type="hidden" name="bot-field" />
@@ -95,10 +102,11 @@ import { Icon } from "astro-icon/components";
   const successMessage = document.getElementById("message-success");
   const errorMessage = document.getElementById("message-error");
 
-  form?.addEventListener("submit", (event) => {
+  form?.addEventListener("submit", async (event) => {
     // Verhindert das Standard-Formular-Submit und Seitenneuladen
     event.preventDefault();
-    
+    event.stopPropagation();
+
     const formData = new FormData(form);
     let valid = true;
 
@@ -127,21 +135,41 @@ import { Icon } from "astro-icon/components";
     if (!valid) return;
 
     // Sendet das Formular per AJAX an Netlify (verhindert Seitenneuladen)
-    fetch("/", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams(formData as any).toString(),
-    })
-      .then(() => {
-        // Bei Erfolg: Formular ausblenden, Erfolgsmeldung einblenden
-        form.classList.add("hidden");
-        successMessage?.classList.remove("hidden");
-      })
-      .catch((error) => {
-        // Bei Fehler: Formular ausblenden, Fehlermeldung einblenden
-        console.error("Fehler beim Senden:", error);
-        form.classList.add("hidden");
-        errorMessage?.classList.remove("hidden");
+
+    // fetch("/", {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    //   body: new URLSearchParams(formData as any).toString(),
+    // })
+    //   .then(() => {
+    //     // Bei Erfolg: Formular ausblenden, Erfolgsmeldung einblenden
+    //     form.classList.add("hidden");
+    //     successMessage?.classList.remove("hidden");
+    //   })
+    //   .catch((error) => {
+    //     // Bei Fehler: Formular ausblenden, Fehlermeldung einblenden
+    //     console.error("Fehler beim Senden:", error);
+    //     form.classList.add("hidden");
+    //     errorMessage?.classList.remove("hidden");
+    //   });
+
+    try {
+      const response = await fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(formData as any).toString(),
       });
+
+      if (response.ok) {
+        form.classList.add("hidden");
+        document.getElementById("message-success")?.classList.remove("hidden");
+      } else {
+        throw new Error("Network response was not ok");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      form.classList.add("hidden");
+      document.getElementById("message-error")?.classList.remove("hidden");
+    }
   });
 </script>
