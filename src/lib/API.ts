@@ -277,17 +277,30 @@ export const getLandingPage = async (): Promise<LandingPage> => {
 // -------------------------
 // Single Page by ID
 // -------------------------
-export const getPageByID = async (id: string): Promise<Page> => {
+export const getPageByID = async (id: string): Promise<Page | null> => {
   // console.log('Fetching page with ID:', id);
   
   try {
-    const entry = await contentfulClient.getEntry<CFPage>(id);
+    // Holt Entries mit sys.id Filter - gibt leeres Array zurück wenn unpublished
+    const result = await contentfulClient.getEntries<CFPage>({
+      content_type: 'page', // Ersetze 'page' mit deinem Content Type
+      'sys.id': id,
+      limit: 1
+    });
+    
+    // Prüft ob die Seite existiert und published ist
+    if (result.items.length === 0) {
+      console.log('Page not found or not published:', id);
+      return null;
+    }
+    
+    const entry = result.items[0];
     // console.log('Entry received:', entry);
     // console.log('Entry fields:', entry.fields);
     
     const { name, text, intro, image } = entry.fields;
     
-    // console.log('Extracted fields:', { name, text, info, image });
+    // console.log('Extracted fields:', { name, text, intro, image });
     
     return {
       contentTypeId: entry.sys.contentType.sys.id,
@@ -304,6 +317,6 @@ export const getPageByID = async (id: string): Promise<Page> => {
     };
   } catch (error) {
     console.error('Error fetching page:', error);
-    throw error;
+    return null; // Gibt null zurück statt Error zu werfen
   }
 };
