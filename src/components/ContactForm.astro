@@ -4,19 +4,23 @@ import { Icon } from "astro-icon/components";
 ---
 
 <section>
-  <!-- Formular: Wird bei Erfolg oder Fehler ausgeblendet -->
+  <!-- ==========================
+       Kontaktformular
+       ========================== -->
   <form
     id="contactForm"
-    class="grid grid-cols-2 gap-8 prose mx-auto p-4"
     name="contact"
     method="POST"
     action="."
     netlify-honeypot="bot-field"
     data-netlify="true"
+    class="grid grid-cols-2 gap-8 prose mx-auto p-4"
   >
-    <!-- Hidden fields für Netlify Forms -->
+    <!-- Hidden Fields für Netlify -->
     <input type="hidden" name="form-name" value="contact" />
     <input type="hidden" name="bot-field" />
+
+    <!-- Vorname -->
     <InputField
       id="Vorname"
       label="Vorname"
@@ -24,6 +28,8 @@ import { Icon } from "astro-icon/components";
       placeholder="Ihr Vorname"
       class="col-span-2 sm:col-span-1"
     />
+
+    <!-- Nachname -->
     <InputField
       id="Nachname"
       label="Nachname"
@@ -50,6 +56,7 @@ import { Icon } from "astro-icon/components";
       class="col-span-2 sm:col-span-1"
     />
 
+    <!-- Nachricht -->
     <div class="group col-span-2 flex flex-wrap">
       <label
         class="w-30 font-smallCaps border border-brand border-b-0 tracking-wider text-brand group-focus-within:text-white group-focus-within:bg-brand p-2 transition-all"
@@ -63,9 +70,11 @@ import { Icon } from "astro-icon/components";
         cols="30"
         rows="10"
         placeholder="Ihre Nachricht an uns"
-        class="w-full border border-1 border-brand p-2 outline-none"></textarea>
+        class="w-full border border-1 border-brand p-2 outline-none"
+      ></textarea>
     </div>
 
+    <!-- Submit Button -->
     <div class="col-span-2 flex justify-end">
       <input
         id="contact-submit"
@@ -76,7 +85,9 @@ import { Icon } from "astro-icon/components";
     </div>
   </form>
 
-  <!-- Erfolgsmeldung: Zunächst versteckt -->
+  <!-- ==========================
+       Erfolgsmeldung
+       ========================== -->
   <div id="message-success" class="hidden prose text-center m-auto">
     <div
       class="text-white bg-brand m-auto rounded-full w-32 h-32 flex justify-center items-center"
@@ -89,7 +100,9 @@ import { Icon } from "astro-icon/components";
     </p>
   </div>
 
-  <!-- Fehlermeldung: Zunächst versteckt -->
+  <!-- ==========================
+       Fehlermeldung
+       ========================== -->
   <div id="message-error" class="hidden prose text-center m-auto">
     <p>
       Leider ist ein Fehler aufgetreten! <br />
@@ -98,71 +111,75 @@ import { Icon } from "astro-icon/components";
   </div>
 </section>
 
-<script lang="ts" is:client>
-  document.addEventListener("DOMContentLoaded", () => {
-    const contactForm = document.querySelector("#contactForm");
+<!-- ==========================
+     Client-Script für AJAX-Submit (JavaScript)
+     ========================== -->
+<script is:client>
+  document.addEventListener("DOMContentLoaded", function() {
+    // Formular abrufen
+    const contactForm = document.getElementById("contactForm");
+    if (!contactForm) return;
 
+    // Erfolg- und Fehlermeldungen abrufen
     const successMessage = document.getElementById("message-success");
     const errorMessage = document.getElementById("message-error");
 
-    console.log("FORM:", contactForm);
-    console.log("TYPE OF FORM:", typeof contactForm);
-    console.log("INSTANCE:", contactForm instanceof HTMLFormElement);
+    // Debug-Ausgabe
+    // console.log("FORM:", contactForm);
+    // console.log("INSTANCE:", contactForm instanceof HTMLFormElement);
 
-    contactForm?.addEventListener("submit", async (event) => {
-      // Verhindert das Standard-Formular-Submit und Seitenneuladen
-      event.preventDefault();
+    // Eventlistener für Submit
+    contactForm.addEventListener("submit", function(event) {
+      event.preventDefault(); // Verhindert Seitenreload
       event.stopPropagation();
 
       const formData = new FormData(contactForm);
       let valid = true;
 
-      // Validierung: Prüft alle Eingabefelder auf Gültigkeit
-      contactForm
-        .querySelectorAll<
-          HTMLInputElement | HTMLTextAreaElement
-        >("input, textarea")
-        .forEach((field) => {
-          // Entfernt vorherige Fehlermeldungen
-          field.classList.remove("border-red-500");
-          field.nextElementSibling?.remove();
+      // Alle Input- und Textarea-Felder überprüfen
+      const fields = contactForm.querySelectorAll("input, textarea");
 
-          // Prüft ob das Feld gültig ist
-          if (!field.checkValidity()) {
-            valid = false;
-            field.classList.add("border-red-500");
-            const msg = document.createElement("div");
-            msg.className = "text-red-600 text-sm mt-1";
-            msg.textContent = field.validationMessage;
-            field.insertAdjacentElement("afterend", msg);
-          }
-        });
+      fields.forEach(function(field) {
+        // Vorherige Fehlermeldungen entfernen
+        field.classList.remove("border-red-500");
+        if (field.nextElementSibling && field.nextElementSibling.classList.contains("text-red-600")) {
+          field.nextElementSibling.remove();
+        }
 
-      // Stoppt den Versand wenn Validierung fehlschlägt
+        // Validierung
+        if (!field.checkValidity()) {
+          valid = false;
+          field.classList.add("border-red-500");
+
+          const msg = document.createElement("div");
+          msg.className = "text-red-600 text-sm mt-1";
+          msg.textContent = field.validationMessage;
+          field.insertAdjacentElement("afterend", msg);
+        }
+      });
+
+      // Wenn Validierung fehlschlägt, Abbruch
       if (!valid) return;
 
-      // Sendet das Formular per AJAX an Netlify (verhindert Seitenneuladen)
-
-      try {
-        const response = await fetch("/", {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: new URLSearchParams(formData).toString(),
-        });
-
+      // AJAX-Request an Netlify Forms
+      fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(formData).toString()
+      })
+      .then(function(response) {
         if (response.ok) {
           contactForm.classList.add("hidden");
-          document
-            .getElementById("message-success")
-            ?.classList.remove("hidden");
+          successMessage.classList.remove("hidden");
         } else {
           throw new Error("Network response was not ok");
         }
-      } catch (error) {
+      })
+      .catch(function(error) {
         console.error("Error:", error);
         contactForm.classList.add("hidden");
-        document.getElementById("message-error")?.classList.remove("hidden");
-      }
+        errorMessage.classList.remove("hidden");
+      });
     });
   });
 </script>
