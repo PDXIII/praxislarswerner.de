@@ -10,6 +10,7 @@ import { Icon } from "astro-icon/components";
     class="grid grid-cols-2 gap-8 prose mx-auto p-4"
     name="contact"
     method="POST"
+    action="."
     netlify-honeypot="bot-field"
     data-netlify="true"
   >
@@ -97,62 +98,66 @@ import { Icon } from "astro-icon/components";
   </div>
 </section>
 
-<script lang="ts">
-  const form = document.querySelector<HTMLFormElement>("form");
-  const successMessage = document.getElementById("message-success");
-  const errorMessage = document.getElementById("message-error");
+<script lang="ts" is:client>
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.querySelector<HTMLFormElement>("form");
+    const successMessage = document.getElementById("message-success");
+    const errorMessage = document.getElementById("message-error");
 
-  form?.addEventListener("submit", async (event) => {
-    // Verhindert das Standard-Formular-Submit und Seitenneuladen
-    event.preventDefault();
-    event.stopPropagation();
+    form?.addEventListener("submit", async (event) => {
+      // Verhindert das Standard-Formular-Submit und Seitenneuladen
+      event.preventDefault();
+      event.stopPropagation();
 
-    const formData = new FormData(form);
-    let valid = true;
+      const formData = new FormData(form);
+      let valid = true;
 
-    // Validierung: Prüft alle Eingabefelder auf Gültigkeit
-    form
-      .querySelectorAll<
-        HTMLInputElement | HTMLTextAreaElement
-      >("input, textarea")
-      .forEach((field) => {
-        // Entfernt vorherige Fehlermeldungen
-        field.classList.remove("border-red-500");
-        field.nextElementSibling?.remove();
+      // Validierung: Prüft alle Eingabefelder auf Gültigkeit
+      form
+        .querySelectorAll<
+          HTMLInputElement | HTMLTextAreaElement
+        >("input, textarea")
+        .forEach((field) => {
+          // Entfernt vorherige Fehlermeldungen
+          field.classList.remove("border-red-500");
+          field.nextElementSibling?.remove();
 
-        // Prüft ob das Feld gültig ist
-        if (!field.checkValidity()) {
-          valid = false;
-          field.classList.add("border-red-500");
-          const msg = document.createElement("div");
-          msg.className = "text-red-600 text-sm mt-1";
-          msg.textContent = field.validationMessage;
-          field.insertAdjacentElement("afterend", msg);
+          // Prüft ob das Feld gültig ist
+          if (!field.checkValidity()) {
+            valid = false;
+            field.classList.add("border-red-500");
+            const msg = document.createElement("div");
+            msg.className = "text-red-600 text-sm mt-1";
+            msg.textContent = field.validationMessage;
+            field.insertAdjacentElement("afterend", msg);
+          }
+        });
+
+      // Stoppt den Versand wenn Validierung fehlschlägt
+      if (!valid) return;
+
+      // Sendet das Formular per AJAX an Netlify (verhindert Seitenneuladen)
+
+      try {
+        const response = await fetch("/", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams(formData).toString(),
+        });
+
+        if (response.ok) {
+          form.classList.add("hidden");
+          document
+            .getElementById("message-success")
+            ?.classList.remove("hidden");
+        } else {
+          throw new Error("Network response was not ok");
         }
-      });
-
-    // Stoppt den Versand wenn Validierung fehlschlägt
-    if (!valid) return;
-
-    // Sendet das Formular per AJAX an Netlify (verhindert Seitenneuladen)
-
-    try {
-      const response = await fetch("/", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams(formData).toString(),
-      });
-
-      if (response.ok) {
+      } catch (error) {
+        console.error("Error:", error);
         form.classList.add("hidden");
-        document.getElementById("message-success")?.classList.remove("hidden");
-      } else {
-        throw new Error("Network response was not ok");
+        document.getElementById("message-error")?.classList.remove("hidden");
       }
-    } catch (error) {
-      console.error("Error:", error);
-      form.classList.add("hidden");
-      document.getElementById("message-error")?.classList.remove("hidden");
-    }
+    });
   });
 </script>
