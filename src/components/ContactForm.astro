@@ -136,28 +136,11 @@ import { Icon } from "astro-icon/components";
 
     // Sendet das Formular per AJAX an Netlify (verhindert Seitenneuladen)
 
-    // fetch("/", {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    //   body: new URLSearchParams(formData as any).toString(),
-    // })
-    //   .then(() => {
-    //     // Bei Erfolg: Formular ausblenden, Erfolgsmeldung einblenden
-    //     form.classList.add("hidden");
-    //     successMessage?.classList.remove("hidden");
-    //   })
-    //   .catch((error) => {
-    //     // Bei Fehler: Formular ausblenden, Fehlermeldung einblenden
-    //     console.error("Fehler beim Senden:", error);
-    //     form.classList.add("hidden");
-    //     errorMessage?.classList.remove("hidden");
-    //   });
-
     try {
       const response = await fetch("/", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams(formData as any).toString(),
+        body: new URLSearchParams(formData).toString(),
       });
 
       if (response.ok) {
