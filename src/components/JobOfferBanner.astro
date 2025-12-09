@@ -9,7 +9,7 @@ const jobOfferBanner = await getPageByID(data.jobOfferID);
 ---
 
 {
-  jobOfferBanner.sys.publishedAt && (
+  jobOfferBanner && (
     <div class="bg-brand text-center text-white p-4 fixed top-0 md:top-auto md:bottom-0 w-full border-b border-t border-white  ">
       <a href={`/${jobOfferBanner.params.slug}`}>
         <h2 class="mb-2 hover:underline underline-offset-4 font-smallCaps text-lg">{jobOfferBanner.props.name}</h2>

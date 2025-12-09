@@ -226,13 +226,32 @@ export const getPartners = async (): Promise<Partner[]> => {
 // -------------------------
 // Config
 // -------------------------
-export const getConfigByID = async (id: string): Promise<Config> => {
-  const entry = await contentfulClient.getEntry<CFConfig>(id);
-  return {
-    contentTypeId: entry.sys.contentType.sys.id,
-    name: entry.fields.name,
-    data: entry.fields.data,
-  };
+export const getConfigByID = async (id: string): Promise<Config | null> => {
+  try {
+    // Verwendet getEntries statt getEntry - wirft keinen Error bei unpublished
+    const result = await contentfulClient.getEntries<CFConfig>({
+      content_type: 'config', // Ersetze mit deinem Config Content Type Namen
+      'sys.id': id,
+      limit: 1
+    });
+    
+    // Prüft ob Config existiert und published ist
+    if (result.items.length === 0) {
+      console.log('Config not found or not published:', id);
+      return null;
+    }
+    
+    const entry = result.items[0];
+    
+    return {
+      contentTypeId: entry.sys.contentType.sys.id,
+      name: entry.fields.name,
+      data: entry.fields.data,
+    };
+  } catch (error) {
+    console.error('Error fetching config:', error);
+    return null;
+  }
 };
 
 // -------------------------
