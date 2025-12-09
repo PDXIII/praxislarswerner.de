@@ -19,11 +19,18 @@ export async function getStaticPaths() {
 const { slug } = Astro.params;
 
 // Angebots-Daten, Team-Mitglieder und Settings parallel laden
-const [offers, teamMembers, settings] = await Promise.all([
+const [offers, teamMembers] = await Promise.all([
   getOffers(),
   getTeamMembers(),
-  getConfigByID("5eUmE4yWNEM9xNibICQaWh"),
 ]);
+
+const settings = await getConfigByID("5eUmE4yWNEM9xNibICQaWh");
+
+if (!settings) {
+  throw new Error("Settings konnten nicht geladen werden - ist die Config published?");
+}
+
+
 
 // Das aktuelle Angebot anhand des Slugs finden
 const offerItem: Offer | undefined = offers.find((o) => o.params.slug === slug);
