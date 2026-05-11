@@ -14,6 +14,8 @@ const { partners } = Astro.props;
           <a
             class="block break-inside-avoid p-2 bg-brand text-white hover:underline underline-offset-4"
             href={item.props.link}
+            target="_blank"
+            rel="noopener noreferrer"
             set:html={item.props.name}
           />
         </li>

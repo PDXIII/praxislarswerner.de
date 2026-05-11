@@ -4,7 +4,12 @@ import "mapbox-gl/dist/mapbox-gl.css";
 const { id, data } = Astro.props;
 ---
 
-<div id={id} class="h-screen w-screen"></div>
+<div
+  id={id}
+  class="h-screen w-screen"
+  data-lng={data.coordinates?.lng ?? 13.3799}
+  data-lat={data.coordinates?.lat ?? 52.522}
+></div>
 <div class="hidden">
   <div id="contact-popup">
     <header class="font-primary text-center mb-4">
@@ -54,7 +59,10 @@ const { id, data } = Astro.props;
   import mapboxgl from "mapbox-gl";
 
   const initMap = () => {
-    var center = [13.3799, 52.522];
+    const mapEl = document.getElementById("map");
+    const lng = parseFloat(mapEl.dataset.lng);
+    const lat = parseFloat(mapEl.dataset.lat);
+    var center = [lng, lat];
 
     mapboxgl.accessToken = import.meta.env.PUBLIC_MAPBOX_TOKEN;
     const map = new mapboxgl.Map({

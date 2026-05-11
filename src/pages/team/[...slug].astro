@@ -1,5 +1,6 @@
 ---
 import { getTeamMembers, getConfigByID, getOffers } from "../../lib/API";
+import { CONTENTFUL_IDS } from "../../lib/constants";
 import type { TeamMember, Offer } from "../../lib/types";
 import Base from "../../layouts/Base.astro";
 import PageHeader from "../../components/PageHeader.astro";
@@ -7,27 +8,25 @@ import RichTextContainer from "../../components/RichTextContainer.astro";
 import OfferList from "../../components/OfferList.astro";
 
 export async function getStaticPaths() {
-  const teamMembers: TeamMember[] = await getTeamMembers();
-  return teamMembers.map((member) => ({ params: { slug: member.params.slug } }));
+  const [members, settings, offers] = await Promise.all([
+    getTeamMembers(),
+    getConfigByID(CONTENTFUL_IDS.settings),
+    getOffers(),
+  ]);
+  return members.map((member) => ({
+    params: { slug: member.params.slug },
+    props: { member, settings, offers },
+  }));
 }
 
+const { member, settings, offers } = Astro.props as {
+  member: TeamMember;
+  settings: Awaited<ReturnType<typeof getConfigByID>>;
+  offers: Offer[];
+};
 const { slug } = Astro.params;
 
-// Team-Mitglied, Settings und Angebote parallel laden
-const [members, settings, offers] = await Promise.all([
-  getTeamMembers(),
-  getConfigByID("5eUmE4yWNEM9xNibICQaWh"),
-  getOffers(),
-]);
-
-// Aktuelles Team-Mitglied finden
-const member: TeamMember | undefined = members.find((m) => m.params.slug === slug);
-
-if (!member) {
-  throw new Error(`Team-Mitglied für slug "${slug}" nicht gefunden`);
-}
-
-const { name, title, bio, info, image, offer } = member.props;
+const { name, title, bio, image, offer } = member.props;
 
 // Settings entpacken
 const brand = `${settings.data.prefix} ${settings.data.owner}`;
@@ -41,7 +40,7 @@ const validOffers: Offer[] = Array.isArray(offer)
 
 <Base
   title={name}
-  description={info}
+  description={name}
   slug={slug}
   image={image?.url}
   brand={brand}

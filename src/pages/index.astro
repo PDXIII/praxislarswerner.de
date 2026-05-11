@@ -18,6 +18,7 @@ import {
 } from "../lib/API";
 
 import { cached } from "../lib/cached";
+import { CONTENTFUL_IDS } from "../lib/constants";
 
 // 🚀 Alle API-Aufrufe parallel und gecacht
 const [landingPage, teamMembers, offers, partners, settings] = await Promise.all([
@@ -25,15 +26,16 @@ const [landingPage, teamMembers, offers, partners, settings] = await Promise.all
   cached("teamMembers", getTeamMembers),
   cached("offers", getOffers),
   cached("partners", getPartners),
-  cached("settings", () => getConfigByID("5eUmE4yWNEM9xNibICQaWh")),
+  cached("settings", () => getConfigByID(CONTENTFUL_IDS.settings)),
 ]);
 
 const { data } = settings;
 
 // Metadaten für Base
 const title = `${data.title} – ${data.subtitle}`;
-const description = landingPage.info || data.subtitle;
-const image = landingPage.props.slideshowImages?.[0]?.fields?.file?.url || "";
+const description = landingPage.props.info || data.subtitle;
+const rawImage = landingPage.props.slideshowImages?.[0]?.fields?.file?.url || "";
+const image = rawImage.startsWith("//") ? `https:${rawImage}` : rawImage;
 const domain = data.domain;
 
 ---
@@ -41,7 +43,7 @@ const domain = data.domain;
   <header class="w-screen h-screen relative">
     <Slideshow images={landingPage.props.slideshowImages} />
     <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 text-shadow-lg text-center">
-      <h1 class="prefix lowercase text-xl font-smallCaps leading-none text-brand tracking-wider drop-shadow-lg" set:html={data.prefix} />
+      <p class="prefix lowercase text-xl font-smallCaps leading-none text-brand tracking-wider drop-shadow-lg" set:html={data.prefix} />
       <h1 class="title min-w-52 font-smallCapsBold text-2xl sm:text-4xl text-brand tracking-wider mb-2 drop-shadow-xl">
         <span class="border-brand px-4 sm:px-8 border-b-2">{data.owner}</span>
       </h1>

@@ -1,59 +1,44 @@
 ---
 import { getOffers, getConfigByID, getTeamMembers } from "../../lib/API";
+import { CONTENTFUL_IDS } from "../../lib/constants";
 import type { Offer, TeamMember } from "../../lib/types";
 import Base from "../../layouts/Base.astro";
 import PageHeader from "../../components/PageHeader.astro";
 import RichTextContainer from "../../components/RichTextContainer.astro";
 import TeamList from "../../components/TeamList.astro";
 
-// 🚀 Korrekte getStaticPaths für dynamische Routen
 export async function getStaticPaths() {
-  const offers: Offer[] = await getOffers();
-
+  const [offers, teamMembers, settings] = await Promise.all([
+    getOffers(),
+    getTeamMembers(),
+    getConfigByID(CONTENTFUL_IDS.settings),
+  ]);
   return offers.map((offer) => ({
     params: { slug: offer.params.slug },
+    props: { offer, teamMembers, settings },
   }));
 }
 
-// Aktueller Slug aus der URL
+const { offer: offerItem, teamMembers, settings } = Astro.props as {
+  offer: Offer;
+  teamMembers: TeamMember[];
+  settings: Awaited<ReturnType<typeof getConfigByID>>;
+};
 const { slug } = Astro.params;
 
-// Angebots-Daten, Team-Mitglieder und Settings parallel laden
-const [offers, teamMembers] = await Promise.all([
-  getOffers(),
-  getTeamMembers(),
-]);
+const { name, text, image } = offerItem.props;
 
-const settings = await getConfigByID("5eUmE4yWNEM9xNibICQaWh");
-
-if (!settings) {
-  throw new Error("Settings konnten nicht geladen werden - ist die Config published?");
-}
-
-
-
-// Das aktuelle Angebot anhand des Slugs finden
-const offerItem: Offer | undefined = offers.find((o) => o.params.slug === slug);
-
-if (!offerItem) {
-  throw new Error(`Angebot für slug "${slug}" nicht gefunden`);
-}
-
-const { name, text, info, image } = offerItem.props;
-
-// Team-Mitglieder filtern, die dieses Angebot anbieten
 const therapists: TeamMember[] = teamMembers.filter((member) =>
   Array.isArray(member.props.offer) && member.props.offer.includes(name)
 );
 
-// Settings entpacken
 const brand = `${settings.data.prefix} ${settings.data.owner}`;
 const domain = settings.data.domain;
 ---
 
 <Base
   title={name}
-  description={info}
+  description={name}
   slug={slug}
   image={image?.url}
   brand={brand}
