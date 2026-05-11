@@ -1,10 +1,11 @@
 ---
 import { getConfigByID, getWisdoms } from "../lib/API";
 import { CONTENTFUL_IDS } from "../lib/constants";
+import { cached } from "../lib/cached";
 import type { Config, Wisdom } from "../lib/types";
 
-const navigation: Config = await getConfigByID(CONTENTFUL_IDS.navigation);
-const wisdoms: Wisdom[] = await getWisdoms();
+const navigation: Config = await cached("navigation", () => getConfigByID(CONTENTFUL_IDS.navigation));
+const wisdoms: Wisdom[] = await cached("wisdoms", getWisdoms);
 
 // ⚡ Zufallszahl-Generator
 function getRandomInteger(min: number, max: number): number {

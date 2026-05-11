@@ -1,10 +1,10 @@
 ---
 import { getConfigByID, getPageByID } from "../lib/API";
 import { CONTENTFUL_IDS } from "../lib/constants";
+import { cached } from "../lib/cached";
 
-const { data } = await getConfigByID(CONTENTFUL_IDS.settings);
-
-const jobOfferBanner = await getPageByID(data.jobOfferID);
+const { data } = await cached("settings", () => getConfigByID(CONTENTFUL_IDS.settings));
+const jobOfferBanner = await cached("jobOfferBanner", () => getPageByID(data.jobOfferID));
 ---
 
 {
