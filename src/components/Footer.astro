@@ -1,9 +1,9 @@
 ---
 import { getConfigByID, getWisdoms } from "../lib/API";
+import { CONTENTFUL_IDS } from "../lib/constants";
 import type { Config, Wisdom } from "../lib/types";
 
-// ⚡ Daten von Contentful laden
-const navigation: Config = await getConfigByID("14812i6b0KLxGsHx9jNlfv");
+const navigation: Config = await getConfigByID(CONTENTFUL_IDS.navigation);
 const wisdoms: Wisdom[] = await getWisdoms();
 
 // ⚡ Zufallszahl-Generator

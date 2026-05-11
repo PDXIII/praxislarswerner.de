@@ -1,15 +1,22 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-
 import tailwind from '@astrojs/tailwind';
-
 import icon from 'astro-icon';
+import sitemap from '@astrojs/sitemap';
 
-// https://astro.build/config
 export default defineConfig({
-  integrations: [tailwind({
-    // Example: Disable injecting a basic `base.css` import on every page.
-    // Useful if you need to define and/or import your own custom `base.css`.
-    applyBaseStyles: false,
-  }), icon()]
+  site: 'https://praxislarswerner.de',
+  integrations: [
+    tailwind({ applyBaseStyles: false }),
+    icon(),
+    sitemap(),
+  ],
+  image: {
+    domains: ['images.ctfassets.net'],
+  },
+  vite: {
+    ssr: {
+      noExternal: ['@contentful/rich-text-html-renderer'],
+    },
+  },
 });

@@ -1,6 +1,7 @@
 // src/lib/API.ts
 import { contentfulClient } from "./contentful";
 import { slug } from "github-slugger";
+import { CONTENTFUL_IDS } from "./constants";
 import type { EntryFieldTypes } from "contentful";
 import type {
   TeamMember,
@@ -90,16 +91,6 @@ interface CFLandingPage {
   };
 }
 
-// -------------------------
-// Cache für wiederholte Calls
-// -------------------------
-const cache = new Map<string, any>();
-export async function cached<T>(key: string, fn: () => Promise<T>): Promise<T> {
-  if (cache.has(key)) return cache.get(key);
-  const result = await fn();
-  cache.set(key, result);
-  return result;
-}
 
 // -------------------------
 // TeamMember
@@ -173,14 +164,14 @@ export const getOffers = async (): Promise<Offer[]> => {
 
 export const getJobOffer = async (id: string): Promise<Page> => {
   const entry = await contentfulClient.getEntry<CFPage>(id);
-  const { name, text, info, image } = entry.fields;
+  const { name, text, intro, image } = entry.fields;
   return {
     contentTypeId: entry.sys.contentType.sys.id,
     params: { slug: slug(name) },
     props: {
       name,
       text,
-      info,
+      intro,
       image: image
         ? { url: image.fields.url, description: image.fields.description }
         : undefined,
@@ -271,7 +262,7 @@ export const getWisdoms = async (): Promise<Wisdom[]> => {
 // LandingPage
 // -------------------------
 export const getLandingPage = async (): Promise<LandingPage> => {
-  const entry = await contentfulClient.getEntry<CFLandingPage>("xln036ds3i7CCHBhvaMVA");
+  const entry = await contentfulClient.getEntry<CFLandingPage>(CONTENTFUL_IDS.landingPage);
   return {
     contentTypeId: entry.sys.contentType.sys.id,
     params: { slug: "" },
@@ -297,34 +288,24 @@ export const getLandingPage = async (): Promise<LandingPage> => {
 // Single Page by ID
 // -------------------------
 export const getPageByID = async (id: string): Promise<Page | null> => {
-  // console.log('Fetching page with ID:', id);
-  
   try {
-    // Holt Entries mit sys.id Filter - gibt leeres Array zurück wenn unpublished
     const result = await contentfulClient.getEntries<CFPage>({
-      content_type: 'page', // Ersetze 'page' mit deinem Content Type
+      content_type: 'page',
       'sys.id': id,
       limit: 1
     });
-    
-    // Prüft ob die Seite existiert und published ist
+
     if (result.items.length === 0) {
       console.log('Page not found or not published:', id);
       return null;
     }
-    
+
     const entry = result.items[0];
-    // console.log('Entry received:', entry);
-    // console.log('Entry fields:', entry.fields);
-    
     const { name, text, intro, image } = entry.fields;
-    
-    // console.log('Extracted fields:', { name, text, intro, image });
-    
+
     return {
       contentTypeId: entry.sys.contentType.sys.id,
       params: { slug: slug(name) },
-      sys: entry.sys,
       props: {
         name,
         text,

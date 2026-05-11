@@ -53,7 +53,7 @@ export type Page = {
   props: {
     name: string;
     text: EntryFieldTypes.RichText;
-    info: EntryFieldTypes.RichText;
+    intro: EntryFieldTypes.RichText;
     image?: {
       url: string;
       description: string;

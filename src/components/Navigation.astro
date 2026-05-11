@@ -1,5 +1,6 @@
 ---
 import { getConfigByID } from "../lib/API";
+import { CONTENTFUL_IDS } from "../lib/constants";
 import { Icon } from "astro-icon/components";
 
 interface NavigationItem {
@@ -9,7 +10,7 @@ interface NavigationItem {
   icon?: string;
 }
 
-const navigation = await getConfigByID("14812i6b0KLxGsHx9jNlfv") as { data: NavigationItem[] };
+const navigation = await getConfigByID(CONTENTFUL_IDS.navigation) as { data: NavigationItem[] };
 ---
 
 <nav
@@ -39,8 +40,8 @@ const navigation = await getConfigByID("14812i6b0KLxGsHx9jNlfv") as { data: Navi
             class="flex flex-col items-center leading-6 block p-4 hover:bg-brand hover:text-white transition-all drop-shadow-sm"
             href={item.link}
           >
-            {item.icon && <Icon name={item.icon} class="w-6 h-6" />}
-            {item.name}
+            {item.icon && <Icon name={item.icon} class="w-6 h-6" aria-hidden="true" />}
+            <span>{item.name}</span>
           </a>
         </li>
       ))}

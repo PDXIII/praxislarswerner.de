@@ -1,9 +1,8 @@
 ---
 import { getConfigByID, getPageByID } from "../lib/API";
+import { CONTENTFUL_IDS } from "../lib/constants";
 
-const { data } = await getConfigByID("5eUmE4yWNEM9xNibICQaWh");
-
-// console.log(data.jobOfferID);
+const { data } = await getConfigByID(CONTENTFUL_IDS.settings);
 
 const jobOfferBanner = await getPageByID(data.jobOfferID);
 ---

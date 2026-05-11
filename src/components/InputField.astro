@@ -6,8 +6,9 @@ interface Props {
   placeholder: string;
   class?: string;
   pattern?: string;
+  required?: boolean;
 }
-const { id, label, type, placeholder, pattern, class: classList } = Astro.props;
+const { id, label, type, placeholder, pattern, required, class: classList } = Astro.props;
 ---
 
 <div
@@ -24,6 +25,7 @@ const { id, label, type, placeholder, pattern, class: classList } = Astro.props;
     id={id}
     name={label}
     pattern={pattern}
+    required={required}
     class="flex-1 shrink-2 p-2 outline-none"
     type={type}
     placeholder={placeholder}
