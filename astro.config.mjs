@@ -14,4 +14,9 @@ export default defineConfig({
   image: {
     domains: ['images.ctfassets.net'],
   },
+  vite: {
+    ssr: {
+      noExternal: ['@contentful/rich-text-html-renderer'],
+    },
+  },
 });
