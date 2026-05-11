@@ -30,7 +30,7 @@ export type Offer = {
   props: {
     name: string;
     order: number;
-    info: EntryFieldTypes.RichText;
+    info: string;
     text: EntryFieldTypes.RichText;
     image?: {
       url: string;

@@ -39,7 +39,7 @@ interface CFOffer {
   fields: {
     name: EntryFieldTypes.Text;
     order: EntryFieldTypes.Number;
-    info: EntryFieldTypes.RichText;
+    info: EntryFieldTypes.Text;
     text: EntryFieldTypes.RichText;
     image?: {
       fields: { url: EntryFieldTypes.Text; description?: EntryFieldTypes.Text };
