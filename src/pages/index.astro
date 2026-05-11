@@ -3,6 +3,7 @@ import Base from "../layouts/Base.astro";
 import Slideshow from "../components/Slideshow.astro";
 import TeamList from "../components/TeamList.astro";
 import OfferList from "../components/OfferList.astro";
+import FundstueckList from "../components/FundstueckList.astro";
 import PartnerList from "../components/PartnerList.astro";
 import Map from "../components/Map.astro";
 import SectionHeader from "../components/SectionHeader.astro";
@@ -15,18 +16,20 @@ import {
   getOffers,
   getPartners,
   getConfigByID,
+  getBookmarks,
 } from "../lib/API";
 
 import { cached } from "../lib/cached";
 import { CONTENTFUL_IDS } from "../lib/constants";
 
 // 🚀 Alle API-Aufrufe parallel und gecacht
-const [landingPage, teamMembers, offers, partners, settings] = await Promise.all([
+const [landingPage, teamMembers, offers, partners, settings, fundstuecke] = await Promise.all([
   cached("landingPage", getLandingPage),
   cached("teamMembers", getTeamMembers),
   cached("offers", getOffers),
   cached("partners", getPartners),
   cached("settings", () => getConfigByID(CONTENTFUL_IDS.settings)),
+  cached("bookmarks", getBookmarks),
 ]);
 
 const { data } = settings;
@@ -59,6 +62,9 @@ const domain = data.domain;
 
     <!-- Angebote -->
     <OfferList offers={offers} />
+
+    <!-- Fundstücke -->
+    {fundstuecke.length > 0 && <FundstueckList items={fundstuecke} />}
 
     <!-- Kontakt -->
     <section class="mb-8">

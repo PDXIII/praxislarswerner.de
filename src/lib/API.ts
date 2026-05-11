@@ -11,7 +11,9 @@ import type {
   Config,
   Wisdom,
   LandingPage,
+  Bookmark,
 } from "./types";
+import { fetchOgMeta } from "./fetchOgMeta";
 
 // -------------------------
 // Interfaces für Contentful
@@ -282,6 +284,57 @@ export const getLandingPage = async (): Promise<LandingPage> => {
       })) ?? [],
     },
   };
+};
+
+// -------------------------
+// -------------------------
+// Bookmarks / Entdeckungen
+// -------------------------
+interface CFBookmark {
+  contentTypeId: "bookmark";
+  fields: {
+    title: EntryFieldTypes.Text;
+    url: EntryFieldTypes.Text;
+    description?: EntryFieldTypes.Text;
+    image?: {
+      fields: { file: { url: EntryFieldTypes.Text } };
+    };
+  };
+}
+
+export const getBookmarks = async (): Promise<Bookmark[]> => {
+  const entries = await contentfulClient.getEntries<CFBookmark>({
+    content_type: "bookmark",
+  });
+
+  return Promise.all(
+    entries.items.map(async (item) => {
+      const { title, url, description, image } = item.fields;
+      const tags = item.metadata?.tags?.map((t) => t.sys.id) ?? [];
+
+      let resolvedDescription = description ?? "";
+      let resolvedImageUrl = image
+        ? `https:${image.fields.file.url}`
+        : undefined;
+
+      if (!resolvedDescription || !resolvedImageUrl) {
+        const og = await fetchOgMeta(url);
+        if (!resolvedDescription) resolvedDescription = og.description ?? "";
+        if (!resolvedImageUrl) resolvedImageUrl = og.imageUrl;
+      }
+
+      return {
+        contentTypeId: "bookmark" as const,
+        props: {
+          title,
+          url,
+          description: resolvedDescription,
+          imageUrl: resolvedImageUrl,
+          tags,
+        },
+      };
+    })
+  );
 };
 
 // -------------------------

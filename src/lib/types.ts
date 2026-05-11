@@ -93,6 +93,20 @@ export type Config = {
 };
 
 // ------------------------------
+// Bookmark / Entdeckung
+// ------------------------------
+export type Bookmark = {
+  contentTypeId: "bookmark";
+  props: {
+    title: string;
+    url: string;
+    description: string;
+    imageUrl?: string;
+    tags: string[];
+  };
+};
+
+// ------------------------------
 // LandingPage
 // ------------------------------
 export type LandingPage = {
