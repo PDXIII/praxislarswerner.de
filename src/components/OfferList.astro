@@ -1,4 +1,5 @@
 ---
+import { Image } from "astro:assets";
 import SectionHeader from "./SectionHeader.astro";
 import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
 
@@ -43,7 +44,20 @@ const { offers } = Astro.props as { offers: Offer[] };
               </div>
             </div>
             <div class={`relative col-span-1 ${index % 2 !== 0 ? "order-2" : "order-1"}`}>
-              {item.props.image && <img src={item.props.image.url} alt={item.props.image.description || ""} />}
+              {item.props.image && (() => {
+                const src = item.props.image.url.startsWith("//")
+                  ? `https:${item.props.image.url}`
+                  : item.props.image.url;
+                return (
+                  <Image
+                    src={src}
+                    alt={item.props.image.description || ""}
+                    width={300}
+                    height={400}
+                    class="object-cover w-full h-full"
+                  />
+                );
+              })()}
             </div>
           </article>
         </a>
