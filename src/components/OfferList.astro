@@ -1,13 +1,12 @@
 ---
 import { Image } from "astro:assets";
 import SectionHeader from "./SectionHeader.astro";
-import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
 
 interface Offer {
   params: { slug: string };
   props: {
     name: string;
-    intro: any; // RichText von Contentful
+    info: string;
     image?: { url: string; description?: string };
   };
 }
@@ -32,15 +31,12 @@ const { offers } = Astro.props as { offers: Offer[] };
                 set:html={item.props.name}
               />
               <div
-                class="absolute bg-white w-full h-full px-8 top-24 group-hover:top-0 z-10 right-0 opacity-0 group-hover:opacity-100 pt-28 group-hover:pt-8 transition-all text-left"
+                class="absolute bg-white w-full h-full px-8 top-24 group-hover:top-0 z-10 right-0 opacity-0 group-hover:opacity-100 pt-28 group-hover:pt-8 transition-all text-left overflow-hidden"
               >
                 <h3 class="text-xl font-smallCapsBold tracking-wider text-brand">
                   {item.props.name}
                 </h3>
-                <div
-                  class="relative"
-                  set:html={documentToHtmlString(item.props.intro)}
-                />
+                <p class="text-gray-800 text-sm mt-2">{item.props.info}</p>
               </div>
             </div>
             <div class={`relative col-span-1 ${index % 2 !== 0 ? "order-2" : "order-1"}`}>
