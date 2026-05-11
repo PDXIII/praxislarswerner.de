@@ -37,7 +37,9 @@ const { items } = Astro.props as { items: Fundstueck[] };
                 <h3 class="text-xl font-smallCapsBold tracking-wider text-brand">
                   {item.props.title}
                 </h3>
-                <p class="text-gray-800 text-sm mt-2">{item.props.description}</p>
+                {item.props.description.split("\n\n").map((para) => (
+                  <p class="text-gray-800 text-sm mt-2">{para}</p>
+                ))}
               </div>
             </div>
             <div class={`relative col-span-1 ${index % 2 !== 0 ? "order-2" : "order-1"}`}>

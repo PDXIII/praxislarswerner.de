@@ -312,16 +312,16 @@ export const getBookmarks = async (): Promise<Bookmark[]> => {
       const { title, url, description, image } = item.fields;
       const tags = item.metadata?.tags?.map((t) => t.sys.id) ?? [];
 
-      let resolvedDescription = description ?? "";
       let resolvedImageUrl = image
         ? `https:${image.fields.file.url}`
         : undefined;
 
-      if (!resolvedDescription || !resolvedImageUrl) {
-        const og = await fetchOgMeta(url);
-        if (!resolvedDescription) resolvedDescription = og.description ?? "";
-        if (!resolvedImageUrl) resolvedImageUrl = og.imageUrl;
-      }
+      const og = await fetchOgMeta(url);
+      const resolvedDescription = [description, og.description]
+        .filter(Boolean)
+        .join("\n\n");
+
+      if (!resolvedImageUrl) resolvedImageUrl = og.imageUrl;
 
       return {
         contentTypeId: "bookmark" as const,
