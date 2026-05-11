@@ -1,13 +1,13 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-import tailwind from '@astrojs/tailwind';
 import icon from 'astro-icon';
 import sitemap from '@astrojs/sitemap';
+import tailwindcss from 'tailwindcss';
+import autoprefixer from 'autoprefixer';
 
 export default defineConfig({
   site: 'https://praxislarswerner.de',
   integrations: [
-    tailwind({ applyBaseStyles: false }),
     icon(),
     sitemap(),
   ],
@@ -15,6 +15,11 @@ export default defineConfig({
     domains: ['images.ctfassets.net'],
   },
   vite: {
+    css: {
+      postcss: {
+        plugins: [tailwindcss(), autoprefixer()],
+      },
+    },
     ssr: {
       noExternal: ['@contentful/rich-text-html-renderer'],
     },
