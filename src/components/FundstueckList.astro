@@ -20,7 +20,7 @@ const { items } = Astro.props as { items: Fundstueck[] };
     {items.map((item, index) => (
       <li class="mb-8">
         <a class="group" href={item.props.url} target="_blank" rel="noopener noreferrer">
-          <article class="relative grid grid-cols-3 overflow-hidden mb-0 group-hover:shadow-lg transition-all group-hover:scale-105">
+          <article class="relative grid grid-cols-3 overflow-hidden mb-0 group-hover:shadow-lg transition-all group-hover:scale-105" style="height: 200px">
             <div
               class={`col-span-2 h-full bg-brand flex flex-col justify-center ${
                 index % 2 !== 0 ? "order-1 text-right" : "order-2"
@@ -45,7 +45,7 @@ const { items } = Astro.props as { items: Fundstueck[] };
                 <img
                   src={item.props.imageUrl}
                   alt={item.props.title}
-                  class="object-cover w-full h-full"
+                  class="absolute inset-0 w-full h-full object-cover"
                 />
               )}
             </div>
