@@ -1,7 +1,8 @@
 ---
 import { Image } from "astro:assets";
 import SectionHeader from "./SectionHeader.astro";
-import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
+import pkg from "@contentful/rich-text-html-renderer";
+const { documentToHtmlString } = pkg;
 
 interface Offer {
   params: { slug: string };
