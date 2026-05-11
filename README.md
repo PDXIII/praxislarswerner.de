@@ -1,48 +1,93 @@
-# Astro Starter Kit: Basics
+# Praxis Lars Werner
 
-```sh
-npm create astro@latest -- --template basics
+Website der Physiotherapie-Praxis Lars Werner in Berlin.
+
+## Tech-Stack
+
+- **[Astro 6](https://astro.build/)** — Static Site Generator
+- **[Tailwind CSS 3](https://tailwindcss.com/)** — Utility-first CSS
+- **[Contentful](https://www.contentful.com/)** — Headless CMS (Inhalte, Navigation, Konfiguration)
+- **[Mapbox GL](https://www.mapbox.com/)** — Interaktive Karte auf der Kontaktseite
+- **[Netlify](https://www.netlify.com/)** — Hosting & Formular-Verarbeitung
+
+## Lokale Entwicklung
+
+### Voraussetzungen
+
+- Node.js ≥ 20
+- npm ≥ 10
+
+### Setup
+
+```bash
+npm install
 ```
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/basics)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/basics)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/basics/devcontainer.json)
+Lege eine `.env`-Datei im Projektroot an:
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-![just-the-basics](https://github.com/withastro/astro/assets/2244813/a0a5533c-a856-4198-8470-2d67b1d7c554)
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src/
-│   ├── layouts/
-│   │   └── Layout.astro
-│   └── pages/
-│       └── index.astro
-└── package.json
+```env
+CONTENTFUL_SPACE_ID=...
+CONTENTFUL_DELIVERY_TOKEN=...
+CONTENTFUL_PREVIEW_TOKEN=...
+PUBLIC_MAPBOX_TOKEN=...
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+Die Tokens findest du in den Contentful- bzw. Mapbox-Einstellungen sowie in den Netlify-Umgebungsvariablen.
 
-## 🧞 Commands
+### Entwicklungsserver starten
 
-All commands are run from the root of the project, from a terminal:
+```bash
+npm run dev
+```
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+Die Seite ist unter [http://localhost:4321](http://localhost:4321) erreichbar.
 
-## 👀 Want to learn more?
+Im Dev-Modus wird der Contentful **Preview**-Token verwendet, sodass auch unveröffentlichte Inhalte sichtbar sind.
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+## Verfügbare Commands
+
+| Command | Beschreibung |
+|---|---|
+| `npm run dev` | Entwicklungsserver starten |
+| `npm run build` | Produktions-Build erstellen |
+| `npm run preview` | Produktions-Build lokal vorschauen |
+| `npm run test` | Unit-Tests (Vitest, watch mode) |
+| `npm run test:run` | Unit-Tests einmalig durchlaufen |
+| `npm run test:e2e` | E2E-Tests (Playwright) |
+
+## Tests
+
+Unit-Tests mit [Vitest](https://vitest.dev/) für Hilfsfunktionen (`src/lib/`).  
+E2E-Tests mit [Playwright](https://playwright.dev/) für Kontaktformular und Navigation.
+
+```bash
+npm run test:run   # Unit-Tests
+npm run test:e2e   # E2E-Tests (Dev-Server muss laufen)
+```
+
+## Contentful-Struktur
+
+Die Seite bezieht alle Inhalte aus Contentful. Zentrale Content-Types:
+
+| Content-Type | Beschreibung |
+|---|---|
+| `landingPage` | Startseiten-Inhalte (Intro, Slideshow, Kontakttext) |
+| `teamMember` | Team-Mitglieder mit Bio und Angeboten |
+| `offer` | Therapieangebote |
+| `page` | Statische Unterseiten (z.B. Stellenangebote) |
+| `config` | Site-Konfiguration (Adresse, Navigation, Koordinaten) |
+| `associates` | Partner-Links |
+| `wisdom` | Zitate für den Footer |
+
+Die Contentful-Entry-IDs sind in [`src/lib/constants.ts`](src/lib/constants.ts) zentralisiert.
+
+## Deployment
+
+Der Build läuft automatisch auf Netlify bei jedem Push auf `main`.  
+Netlify verarbeitet außerdem das Kontaktformular (Netlify Forms).
+
+Benötigte Umgebungsvariablen in Netlify:
+- `CONTENTFUL_SPACE_ID`
+- `CONTENTFUL_DELIVERY_TOKEN`
+- `CONTENTFUL_PREVIEW_TOKEN`
+- `PUBLIC_MAPBOX_TOKEN`
