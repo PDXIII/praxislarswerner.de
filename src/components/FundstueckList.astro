@@ -1,28 +1,60 @@
 ---
 import SectionHeader from "./SectionHeader.astro";
 
+interface Tag {
+  id: string;
+  name: string;
+}
+
 interface Fundstueck {
   props: {
     title: string;
     url: string;
     description: string;
     imageUrl?: string;
-    tags: string[];
+    tags: Tag[];
   };
 }
 
-const { items } = Astro.props as { items: Fundstueck[] };
+interface Props {
+  items: Fundstueck[];
+  limit?: number;
+  moreHref?: string;
+  showFilter?: boolean;
+}
+
+const { items, limit, moreHref, showFilter } = Astro.props as Props;
+const visibleItems = limit ? items.slice(0, limit) : items;
+const showTeaser = limit !== undefined && items.length > limit;
+
+const allTags = showFilter
+  ? [...new Map(items.flatMap((item) => item.props.tags).map((t) => [t.id, t])).values()]
+      .sort((a, b) => a.name.localeCompare(b.name))
+  : [];
 ---
 
 <section class="container mx-auto px-4 mb-8">
   <SectionHeader title="Fundstücke" id="fundstuecke" />
+
+  {showFilter && allTags.length > 0 && (
+    <div class="flex flex-wrap gap-2 mx-auto max-w-3xl mb-6">
+      {allTags.map((tag) => (
+        <button
+          class="tag-filter border border-brand text-brand font-smallCaps tracking-wider text-sm px-4 py-1 transition-all hover:bg-brand hover:text-white"
+          data-tag={tag.id}
+        >
+          {tag.name}
+        </button>
+      ))}
+    </div>
+  )}
+
   <ul class="grid grid-cols-1 sm:grid-cols-2 gap-6 mx-auto max-w-3xl">
-    {items.map((item) => (
-      <li>
+    {visibleItems.map((item) => (
+      <li data-tags={item.props.tags.map((t) => t.id).join(",")}>
         <a class="group" href={item.props.url} target="_blank" rel="noopener noreferrer">
           <article class="flex flex-col overflow-hidden group-hover:shadow-lg transition-all group-hover:scale-105 h-full">
 
-            <!-- Bild -->
             <div class="relative aspect-video bg-gray-100">
               {item.props.imageUrl
                 ? <img
@@ -34,14 +66,12 @@ const { items } = Astro.props as { items: Fundstueck[] };
               }
             </div>
 
-            <!-- Titel -->
             <div class="bg-brand px-4 py-3">
               <h3 class="text-white font-smallCapsBold tracking-wider text-lg leading-tight group-hover:underline underline-offset-4">
                 {item.props.title}
               </h3>
             </div>
 
-            <!-- Beschreibung -->
             {item.props.description && (
               <div class="bg-white px-4 py-3 flex-1">
                 {item.props.description.split("\n\n").map((para) => (
@@ -54,5 +84,54 @@ const { items } = Astro.props as { items: Fundstueck[] };
         </a>
       </li>
     ))}
+    {showTeaser && (
+      <li class="flex">
+        <article class="flex flex-col flex-1 items-center justify-center p-8 text-center">
+          <p class="text-gray-700 text-sm mb-4">Wenn Sie mehr lesen möchten …</p>
+          <a
+            href={moreHref || "/fundstuecke"}
+            class="inline-block bg-brand text-white font-smallCaps tracking-wider px-6 py-2 hover:underline hover:underline-offset-4 hover:scale-105 hover:shadow-lg transition-all text-lg"
+          >
+            … hier geht's lang!
+          </a>
+        </article>
+      </li>
+    )}
   </ul>
 </section>
+
+{showFilter && (
+  <style>
+    .tag-filter.is-active {
+      background-color: var(--color-brand);
+      color: white;
+    }
+  </style>
+
+  <script>
+    const buttons = document.querySelectorAll<HTMLButtonElement>(".tag-filter");
+    const listItems = document.querySelectorAll<HTMLLIElement>("[data-tags]");
+    let activeTag: string | null = null;
+
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const tag = btn.dataset.tag!;
+
+        if (activeTag === tag) {
+          activeTag = null;
+          buttons.forEach((b) => b.classList.remove("is-active"));
+          listItems.forEach((li) => li.style.removeProperty("display"));
+        } else {
+          activeTag = tag;
+          buttons.forEach((b) =>
+            b.classList.toggle("is-active", b.dataset.tag === tag)
+          );
+          listItems.forEach((li) => {
+            const tags = li.dataset.tags?.split(",") ?? [];
+            li.style.display = tags.includes(tag) ? "" : "none";
+          });
+        }
+      });
+    });
+  </script>
+)}

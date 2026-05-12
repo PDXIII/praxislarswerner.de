@@ -102,7 +102,7 @@ export type Bookmark = {
     url: string;
     description: string;
     imageUrl?: string;
-    tags: string[];
+    tags: { id: string; name: string }[];
   };
 };
 

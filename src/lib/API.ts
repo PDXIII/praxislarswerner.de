@@ -303,14 +303,20 @@ interface CFBookmark {
 }
 
 export const getBookmarks = async (): Promise<Bookmark[]> => {
-  const entries = await contentfulClient.getEntries<CFBookmark>({
-    content_type: "bookmark",
-  });
+  const [entries, tagsCollection] = await Promise.all([
+    contentfulClient.getEntries<CFBookmark>({ content_type: "bookmark" }),
+    contentfulClient.getTags(),
+  ]);
+
+  const tagNameMap = new Map(tagsCollection.items.map((t) => [t.sys.id, t.name]));
 
   return Promise.all(
     entries.items.map(async (item) => {
       const { title, url, description, image } = item.fields;
-      const tags = item.metadata?.tags?.map((t) => t.sys.id) ?? [];
+      const tags = (item.metadata?.tags ?? []).map((t) => ({
+        id: t.sys.id,
+        name: tagNameMap.get(t.sys.id) ?? t.sys.id,
+      }));
 
       let resolvedImageUrl = image
         ? `https:${image.fields.file.url}`
