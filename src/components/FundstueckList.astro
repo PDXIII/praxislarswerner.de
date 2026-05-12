@@ -136,27 +136,27 @@ const allTags = showFilter
     const container = document.getElementById("tag-container") as HTMLDivElement | null;
     const fade = document.getElementById("tag-fade") as HTMLDivElement | null;
     const toggle = document.getElementById("tag-toggle") as HTMLButtonElement | null;
-    if (!container || !fade || !toggle) return;
 
-    // Hide toggle button if all tags fit in collapsed height
-    if (container.scrollHeight <= COLLAPSED_HEIGHT) {
-      toggle.style.display = "none";
-      fade.style.display = "none";
-    }
-
-    let isOpen = false;
-    toggle.addEventListener("click", () => {
-      if (!isOpen) {
-        container.style.maxHeight = container.scrollHeight + "px";
-        fade.style.opacity = "0";
-        toggle.textContent = "weniger …";
-      } else {
-        container.style.maxHeight = COLLAPSED_HEIGHT + "px";
-        fade.style.opacity = "1";
-        toggle.textContent = "mehr …";
+    if (container && fade && toggle) {
+      if (container.scrollHeight <= COLLAPSED_HEIGHT) {
+        toggle.style.display = "none";
+        fade.style.display = "none";
       }
-      isOpen = !isOpen;
-    });
+
+      let isOpen = false;
+      toggle.addEventListener("click", () => {
+        if (!isOpen) {
+          container.style.maxHeight = container.scrollHeight + "px";
+          fade.style.opacity = "0";
+          toggle.textContent = "weniger …";
+        } else {
+          container.style.maxHeight = COLLAPSED_HEIGHT + "px";
+          fade.style.opacity = "1";
+          toggle.textContent = "mehr …";
+        }
+        isOpen = !isOpen;
+      });
+    }
 
     const buttons = document.querySelectorAll<HTMLButtonElement>(".tag-filter");
     const listItems = document.querySelectorAll<HTMLLIElement>("[data-tags]");
