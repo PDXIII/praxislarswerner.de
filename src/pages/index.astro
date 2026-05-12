@@ -41,8 +41,33 @@ const rawImage = landingPage.props.slideshowImages?.[0]?.fields?.file?.url ?? ""
 const image = rawImage.startsWith("//") ? `https:${rawImage}` : rawImage;
 const domain = data.domain ?? "";
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": ["MedicalOrganization", "LocalBusiness"],
+  name: `${data.prefix} ${data.owner}`,
+  url: domain,
+  description,
+  telephone: data.phone,
+  email: data.email,
+  medicalSpecialty: "Physiotherapy",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: data.address?.street,
+    postalCode: data.address?.postal,
+    addressLocality: data.address?.city,
+    addressCountry: "DE",
+  },
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: data.coordinates?.lat ?? 52.522,
+    longitude: data.coordinates?.lng ?? 13.3799,
+  },
+  image,
+};
+
 ---
 <Base title={title} description={description} slug="" image={image} domain={domain} brand={`${data.prefix} ${data.owner}`}>
+  <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   <header class="w-screen h-screen relative">
     <Slideshow images={landingPage.props.slideshowImages} />
     <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 text-shadow-lg text-center">

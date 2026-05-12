@@ -4,7 +4,7 @@ import Navigation from "../components/Navigation.astro";
 import Footer from "../components/Footer.astro";
 import JobOfferBanner from "../components/JobOfferBanner.astro";
 
-const { title = "Default Title", description = "", slug = "", image = "/default-og-image.jpg", domain } = Astro.props;
+const { title = "Default Title", description = "", slug = "", image = "/default-og-image.jpg", domain, brand = "Praxis Lars Werner" } = Astro.props;
 const pageUrl = `${domain}/${slug}`;
 ---
 
@@ -24,12 +24,15 @@ const pageUrl = `${domain}/${slug}`;
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={image} />
+    <meta property="og:locale" content="de_DE" />
+    <meta property="og:site_name" content={brand} />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:url" content={pageUrl} />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={image} />
+    <slot name="head" />
   </head>
 
   <body class="font-primary">

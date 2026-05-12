@@ -26,24 +26,43 @@ const { offer: offerItem, teamMembers, settings } = Astro.props as {
 };
 const { slug } = Astro.params;
 
-const { name, text, image } = offerItem.props;
+const { name, info, text, image } = offerItem.props;
 
 const therapists: TeamMember[] = teamMembers.filter((member) =>
   Array.isArray(member.props.offer) && member.props.offer.includes(name)
 );
 
 const brand = `${settings.data.prefix} ${settings.data.owner}`;
-const domain = settings.data.domain;
+const domain = settings.data.domain as string;
+const description = info || name;
+
+const rawImage = image?.url ?? "";
+const ogImage = rawImage.startsWith("//") ? `https:${rawImage}` : rawImage;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "MedicalTherapy",
+  name,
+  description,
+  url: `${domain}/angebot/${slug}`,
+  image: ogImage || undefined,
+  provider: {
+    "@type": "MedicalOrganization",
+    name: brand,
+    url: domain,
+  },
+};
 ---
 
 <Base
   title={name}
-  description={name}
-  slug={slug}
-  image={image?.url}
+  description={description}
+  slug={`angebot/${slug}`}
+  image={ogImage}
   brand={brand}
   domain={domain}
 >
+  <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   <main>
     <article>
       <PageHeader name={name} title={name} image={image} />

@@ -1,6 +1,7 @@
 ---
 import { getPages, getConfigByID } from "../lib/API";
 import { CONTENTFUL_IDS } from "../lib/constants";
+import { richTextToPlain } from "../lib/richTextToPlain";
 import type { Page } from "../lib/types";
 import Base from "../layouts/Base.astro";
 import PageHeader from "../components/PageHeader.astro";
@@ -23,17 +24,19 @@ const { slug } = Astro.params;
 // Page-Daten entpacken
 const { name, text, image, intro } = page.props;
 
-// Settings entpacken
-const brand = `${settings.data.prefix} ${settings.data.owner}`;
-const domain = settings.data.domain;
+const data = (settings?.data ?? {}) as Record<string, any>;
+const brand = `${data.prefix} ${data.owner}`;
+const domain = data.domain as string ?? "";
 
 const rawImage = image?.url || "";
 const ogImage = rawImage.startsWith("//") ? `https:${rawImage}` : rawImage;
+
+const description = (richTextToPlain(intro) || richTextToPlain(text)).slice(0, 160) || name;
 ---
 
 <Base
   title={name}
-  description={name}
+  description={description}
   slug={slug}
   image={ogImage}
   brand={brand}
