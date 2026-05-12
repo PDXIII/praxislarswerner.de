@@ -27,9 +27,12 @@ const { items, limit, moreHref, showFilter } = Astro.props as Props;
 const visibleItems = limit ? items.slice(0, limit) : items;
 const showTeaser = limit !== undefined && items.length > limit;
 
+const tagFrequency = items.flatMap((item) => item.props.tags).reduce<Record<string, number>>(
+  (acc, t) => { acc[t.id] = (acc[t.id] ?? 0) + 1; return acc; }, {}
+);
 const allTags = showFilter
   ? [...new Map(items.flatMap((item) => item.props.tags).map((t) => [t.id, t])).values()]
-      .sort((a, b) => a.name.localeCompare(b.name))
+      .sort((a, b) => (tagFrequency[b.id] ?? 0) - (tagFrequency[a.id] ?? 0))
   : [];
 ---
 
@@ -38,9 +41,15 @@ const allTags = showFilter
 
   {showFilter && allTags.length > 0 && (
     <div class="flex flex-wrap gap-2 mx-auto max-w-3xl mb-6">
+      <button
+        class="tag-filter bg-brand text-white border border-brand font-smallCaps tracking-wider text-sm px-4 py-1 transition-all hover:scale-105 hover:shadow-lg"
+        data-tag="__all__"
+      >
+        Alle
+      </button>
       {allTags.map((tag) => (
         <button
-          class="tag-filter border border-brand text-brand font-smallCaps tracking-wider text-sm px-4 py-1 transition-all hover:bg-brand hover:text-white"
+          class="tag-filter text-brand border border-brand font-smallCaps tracking-wider text-sm px-4 py-1 transition-all hover:bg-brand hover:text-white hover:scale-105 hover:shadow-lg"
           data-tag={tag.id}
         >
           {tag.name}
@@ -101,31 +110,29 @@ const allTags = showFilter
 </section>
 
 {showFilter && (
-  <style>
-    .tag-filter.is-active {
-      background-color: var(--color-brand);
-      color: white;
-    }
-  </style>
-
   <script>
     const buttons = document.querySelectorAll<HTMLButtonElement>(".tag-filter");
     const listItems = document.querySelectorAll<HTMLLIElement>("[data-tags]");
-    let activeTag: string | null = null;
+
+    function setActive(btn: HTMLButtonElement) {
+      buttons.forEach((b) => {
+        const active = b === btn;
+        b.classList.toggle("bg-brand", active);
+        b.classList.toggle("text-white", active);
+        b.classList.toggle("text-brand", !active);
+        b.classList.toggle("hover:bg-brand", !active);
+        b.classList.toggle("hover:text-white", !active);
+      });
+    }
 
     buttons.forEach((btn) => {
       btn.addEventListener("click", () => {
         const tag = btn.dataset.tag!;
+        setActive(btn);
 
-        if (activeTag === tag) {
-          activeTag = null;
-          buttons.forEach((b) => b.classList.remove("is-active"));
+        if (tag === "__all__") {
           listItems.forEach((li) => li.style.removeProperty("display"));
         } else {
-          activeTag = tag;
-          buttons.forEach((b) =>
-            b.classList.toggle("is-active", b.dataset.tag === tag)
-          );
           listItems.forEach((li) => {
             const tags = li.dataset.tags?.split(",") ?? [];
             li.style.display = tags.includes(tag) ? "" : "none";
