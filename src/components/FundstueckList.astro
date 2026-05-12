@@ -133,9 +133,10 @@ const allTags = showFilter
   <script>
     const COLLAPSED_HEIGHT = 82;
 
-    const container = document.getElementById("tag-container") as HTMLDivElement;
-    const fade = document.getElementById("tag-fade") as HTMLDivElement;
-    const toggle = document.getElementById("tag-toggle") as HTMLButtonElement;
+    const container = document.getElementById("tag-container") as HTMLDivElement | null;
+    const fade = document.getElementById("tag-fade") as HTMLDivElement | null;
+    const toggle = document.getElementById("tag-toggle") as HTMLButtonElement | null;
+    if (!container || !fade || !toggle) return;
 
     // Hide toggle button if all tags fit in collapsed height
     if (container.scrollHeight <= COLLAPSED_HEIGHT) {

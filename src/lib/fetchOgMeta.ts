@@ -5,7 +5,17 @@ export interface OgMeta {
   imageUrl?: string;
 }
 
+function extractYouTubeId(url: string): string | null {
+  const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  return match?.[1] ?? null;
+}
+
 export async function fetchOgMeta(url: string): Promise<OgMeta | null> {
+  const ytId = extractYouTubeId(url);
+  if (ytId) {
+    return { imageUrl: `https://img.youtube.com/vi/${ytId}/hqdefault.jpg` };
+  }
+
   try {
     const res = await fetch(url, {
       headers: {
