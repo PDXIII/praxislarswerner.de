@@ -1,0 +1,26 @@
+---
+import Base from "../layouts/Base.astro";
+import FundstueckList from "../components/FundstueckList.astro";
+import { getBookmarks, getConfigByID } from "../lib/API";
+import { CONTENTFUL_IDS } from "../lib/constants";
+import { cached } from "../lib/cached";
+
+const [fundstuecke, settings] = await Promise.all([
+  cached("bookmarks", getBookmarks),
+  cached("settings", () => getConfigByID(CONTENTFUL_IDS.settings)),
+]);
+
+const { data } = settings;
+const domain = data.domain;
+---
+
+<Base
+  title="Fundstücke"
+  description="Empfehlungen und Entdeckungen aus der Praxis Lars Werner"
+  slug="fundstuecke"
+  domain={domain}
+>
+  <main>
+    <FundstueckList items={fundstuecke} />
+  </main>
+</Base>
