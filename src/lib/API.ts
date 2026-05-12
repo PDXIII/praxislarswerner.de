@@ -87,6 +87,7 @@ interface CFLandingPage {
     info: EntryFieldTypes.Text;
     introText: EntryFieldTypes.RichText;
     contactText: EntryFieldTypes.RichText;
+    fundstueckeText?: EntryFieldTypes.RichText;
     slideshowImages?: Array<{
       fields: { file: { url: EntryFieldTypes.Text } };
     }>;
@@ -273,6 +274,7 @@ export const getLandingPage = async (): Promise<LandingPage> => {
       info: entry.fields.info,
       introText: entry.fields.introText,
       contactText: entry.fields.contactText,
+      fundstueckeText: entry.fields.fundstueckeText,
       // ✅ Slideshow-Bilder in der korrekten Struktur für Slideshow.astro
       slideshowImages: entry.fields.slideshowImages?.map((img) => ({
         fields: {
@@ -304,7 +306,7 @@ interface CFBookmark {
 
 export const getBookmarks = async (): Promise<Bookmark[]> => {
   const [entries, tagsCollection] = await Promise.all([
-    contentfulClient.getEntries<CFBookmark>({ content_type: "bookmark" }),
+    contentfulClient.getEntries<CFBookmark>({ content_type: "bookmark", order: ["-sys.createdAt"] }),
     contentfulClient.getTags(),
   ]);
 

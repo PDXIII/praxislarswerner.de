@@ -39,6 +39,8 @@ const allTags = showFilter
 <section class="container mx-auto px-4 mb-8">
   <SectionHeader title="Fundstücke" id="fundstuecke" />
 
+  <slot name="intro" />
+
   {showFilter && allTags.length > 0 && (
     <div class="flex flex-wrap gap-2 mx-auto max-w-3xl mb-6">
       <button

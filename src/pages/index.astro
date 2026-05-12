@@ -32,14 +32,14 @@ const [landingPage, teamMembers, offers, partners, settings, fundstuecke] = awai
   cached("bookmarks", getBookmarks),
 ]);
 
-const { data } = settings;
+const data = (settings?.data ?? {}) as Record<string, any>;
 
 // Metadaten für Base
 const title = `${data.title} – ${data.subtitle}`;
 const description = landingPage.props.info || data.subtitle;
-const rawImage = landingPage.props.slideshowImages?.[0]?.fields?.file?.url || "";
+const rawImage = landingPage.props.slideshowImages?.[0]?.fields?.file?.url ?? "";
 const image = rawImage.startsWith("//") ? `https:${rawImage}` : rawImage;
-const domain = data.domain;
+const domain = data.domain ?? "";
 
 ---
 <Base title={title} description={description} slug="" image={image} domain={domain} brand={`${data.prefix} ${data.owner}`}>
@@ -64,7 +64,13 @@ const domain = data.domain;
     <OfferList offers={offers} />
 
     <!-- Fundstücke -->
-    {fundstuecke.length > 0 && <FundstueckList items={fundstuecke} limit={3} />}
+    {fundstuecke.length > 0 && (
+      <FundstueckList items={fundstuecke} limit={3}>
+        {landingPage.props.fundstueckeText && (
+          <RichTextContainer slot="intro" class="px-4 text-center max-w-3xl mx-auto mb-10 mt-0" style="margin-top: 0;" content={landingPage.props.fundstueckeText} />
+        )}
+      </FundstueckList>
+    )}
 
     <!-- Kontakt -->
     <section class="mb-8">
