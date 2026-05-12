@@ -42,21 +42,39 @@ const allTags = showFilter
   <slot name="intro" />
 
   {showFilter && allTags.length > 0 && (
-    <div class="flex flex-wrap gap-2 mx-auto max-w-3xl mb-6">
-      <button
-        class="tag-filter bg-brand text-white border border-brand font-smallCaps tracking-wider text-sm px-4 py-1 transition-all hover:scale-105 hover:shadow-lg"
-        data-tag="__all__"
-      >
-        Alle
-      </button>
-      {allTags.map((tag) => (
-        <button
-          class="tag-filter text-brand border border-brand font-smallCaps tracking-wider text-sm px-4 py-1 transition-all hover:bg-brand hover:text-white hover:scale-105 hover:shadow-lg"
-          data-tag={tag.id}
+    <div class="mx-auto max-w-3xl mb-6">
+      <div class="relative">
+        <div
+          id="tag-container"
+          class="flex flex-wrap gap-2 overflow-hidden transition-[max-height] duration-300 ease-in-out"
+          style="max-height: 82px;"
         >
-          {tag.name}
-        </button>
-      ))}
+          <button
+            class="tag-filter bg-brand text-white border border-brand font-smallCaps tracking-wider text-sm px-4 py-1 transition-all hover:scale-105 hover:shadow-lg"
+            data-tag="__all__"
+          >
+            Alle
+          </button>
+          {allTags.map((tag) => (
+            <button
+              class="tag-filter text-brand border border-brand font-smallCaps tracking-wider text-sm px-4 py-1 transition-all hover:bg-brand hover:text-white hover:scale-105 hover:shadow-lg"
+              data-tag={tag.id}
+            >
+              {tag.name}
+            </button>
+          ))}
+        </div>
+        <div
+          id="tag-fade"
+          class="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-white to-transparent pointer-events-none transition-opacity duration-300"
+        />
+      </div>
+      <button
+        id="tag-toggle"
+        class="block mx-auto mt-2 text-brand font-smallCaps tracking-wider text-sm hover:underline underline-offset-4 transition-all"
+      >
+        mehr …
+      </button>
     </div>
   )}
 
@@ -113,6 +131,32 @@ const allTags = showFilter
 
 {showFilter && (
   <script>
+    const COLLAPSED_HEIGHT = 82;
+
+    const container = document.getElementById("tag-container") as HTMLDivElement;
+    const fade = document.getElementById("tag-fade") as HTMLDivElement;
+    const toggle = document.getElementById("tag-toggle") as HTMLButtonElement;
+
+    // Hide toggle button if all tags fit in collapsed height
+    if (container.scrollHeight <= COLLAPSED_HEIGHT) {
+      toggle.style.display = "none";
+      fade.style.display = "none";
+    }
+
+    let isOpen = false;
+    toggle.addEventListener("click", () => {
+      if (!isOpen) {
+        container.style.maxHeight = container.scrollHeight + "px";
+        fade.style.opacity = "0";
+        toggle.textContent = "weniger …";
+      } else {
+        container.style.maxHeight = COLLAPSED_HEIGHT + "px";
+        fade.style.opacity = "1";
+        toggle.textContent = "mehr …";
+      }
+      isOpen = !isOpen;
+    });
+
     const buttons = document.querySelectorAll<HTMLButtonElement>(".tag-filter");
     const listItems = document.querySelectorAll<HTMLLIElement>("[data-tags]");
 

@@ -312,7 +312,7 @@ export const getBookmarks = async (): Promise<Bookmark[]> => {
 
   const tagNameMap = new Map(tagsCollection.items.map((t) => [t.sys.id, t.name]));
 
-  return Promise.all(
+  const results = await Promise.all(
     entries.items.map(async (item) => {
       const { title, url, description, image } = item.fields;
       const tags = (item.metadata?.tags ?? []).map((t) => ({
@@ -325,6 +325,8 @@ export const getBookmarks = async (): Promise<Bookmark[]> => {
         : undefined;
 
       const og = await fetchOgMeta(url);
+      if (!og) return null;
+
       const resolvedDescription = [description, og.description]
         .filter(Boolean)
         .join("\n\n");
@@ -343,6 +345,8 @@ export const getBookmarks = async (): Promise<Bookmark[]> => {
       };
     })
   );
+
+  return results.filter((r): r is Bookmark => r !== null);
 };
 
 // -------------------------

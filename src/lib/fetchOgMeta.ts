@@ -5,7 +5,7 @@ export interface OgMeta {
   imageUrl?: string;
 }
 
-export async function fetchOgMeta(url: string): Promise<OgMeta> {
+export async function fetchOgMeta(url: string): Promise<OgMeta | null> {
   try {
     const res = await fetch(url, {
       headers: {
@@ -17,7 +17,7 @@ export async function fetchOgMeta(url: string): Promise<OgMeta> {
       },
       signal: AbortSignal.timeout(8000),
     });
-    if (!res.ok) return {};
+    if (!res.ok) return null;
 
     const html = await res.text();
 
@@ -34,7 +34,7 @@ export async function fetchOgMeta(url: string): Promise<OgMeta> {
 
     return { description: description ?? undefined, imageUrl: imageUrl ?? undefined };
   } catch {
-    return {};
+    return null;
   }
 }
 
