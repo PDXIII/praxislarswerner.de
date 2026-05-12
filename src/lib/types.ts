@@ -93,6 +93,20 @@ export type Config = {
 };
 
 // ------------------------------
+// Bookmark / Entdeckung
+// ------------------------------
+export type Bookmark = {
+  contentTypeId: "bookmark";
+  props: {
+    title: string;
+    url: string;
+    description: string;
+    imageUrl?: string;
+    tags: { id: string; name: string }[];
+  };
+};
+
+// ------------------------------
 // LandingPage
 // ------------------------------
 export type LandingPage = {
@@ -103,6 +117,7 @@ export type LandingPage = {
     introText: EntryFieldTypes.RichText;
     info: EntryFieldTypes.Text;
     contactText: EntryFieldTypes.RichText;
-    slideshowImages?: { url: string }[];
+    fundstueckeText?: EntryFieldTypes.RichText;
+    slideshowImages?: { fields: { file: { url: string }; description?: string } }[];
   };
 };

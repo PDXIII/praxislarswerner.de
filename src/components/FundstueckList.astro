@@ -1,0 +1,191 @@
+---
+import SectionHeader from "./SectionHeader.astro";
+
+interface Tag {
+  id: string;
+  name: string;
+}
+
+interface Fundstueck {
+  props: {
+    title: string;
+    url: string;
+    description: string;
+    imageUrl?: string;
+    tags: Tag[];
+  };
+}
+
+interface Props {
+  items: Fundstueck[];
+  limit?: number;
+  moreHref?: string;
+  showFilter?: boolean;
+}
+
+const { items, limit, moreHref, showFilter } = Astro.props as Props;
+const visibleItems = limit ? items.slice(0, limit) : items;
+const showTeaser = limit !== undefined && items.length > limit;
+
+const tagFrequency = items.flatMap((item) => item.props.tags).reduce<Record<string, number>>(
+  (acc, t) => { acc[t.id] = (acc[t.id] ?? 0) + 1; return acc; }, {}
+);
+const allTags = showFilter
+  ? [...new Map(items.flatMap((item) => item.props.tags).map((t) => [t.id, t])).values()]
+      .sort((a, b) => (tagFrequency[b.id] ?? 0) - (tagFrequency[a.id] ?? 0))
+  : [];
+---
+
+<section class="container mx-auto px-4 mb-8">
+  <SectionHeader title="Fundstücke" id="fundstuecke" />
+
+  <slot name="intro" />
+
+  {showFilter && allTags.length > 0 && (
+    <div class="mx-auto max-w-3xl mb-6">
+      <div class="relative">
+        <div
+          id="tag-container"
+          class="flex flex-wrap gap-2 overflow-hidden transition-[max-height] duration-300 ease-in-out"
+          style="max-height: 82px;"
+        >
+          <button
+            class="tag-filter bg-brand text-white border border-brand font-smallCaps tracking-wider text-sm px-4 py-1 transition-all hover:scale-105 hover:shadow-lg"
+            data-tag="__all__"
+          >
+            Alle
+          </button>
+          {allTags.map((tag) => (
+            <button
+              class="tag-filter text-brand border border-brand font-smallCaps tracking-wider text-sm px-4 py-1 transition-all hover:bg-brand hover:text-white hover:scale-105 hover:shadow-lg"
+              data-tag={tag.id}
+            >
+              {tag.name}
+            </button>
+          ))}
+        </div>
+        <div
+          id="tag-fade"
+          class="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-white to-transparent pointer-events-none transition-opacity duration-300"
+        />
+      </div>
+      <button
+        id="tag-toggle"
+        class="block mx-auto mt-2 text-brand font-smallCaps tracking-wider text-sm hover:underline underline-offset-4 transition-all"
+      >
+        mehr …
+      </button>
+    </div>
+  )}
+
+  <ul class="grid grid-cols-1 sm:grid-cols-2 gap-6 mx-auto max-w-3xl">
+    {visibleItems.map((item) => (
+      <li data-tags={item.props.tags.map((t) => t.id).join(",")}>
+        <a class="group" href={item.props.url} target="_blank" rel="noopener noreferrer">
+          <article class="flex flex-col overflow-hidden group-hover:shadow-lg transition-all group-hover:scale-105 h-full">
+
+            <div class="relative aspect-video bg-gray-100">
+              {item.props.imageUrl
+                ? <img
+                    src={item.props.imageUrl}
+                    alt={item.props.title}
+                    class="absolute inset-0 w-full h-full object-cover"
+                  />
+                : <div class="absolute inset-0 bg-brand/10" />
+              }
+            </div>
+
+            <div class="bg-brand px-4 py-3">
+              <h3 class="text-white font-smallCapsBold tracking-wider text-lg leading-tight group-hover:underline underline-offset-4">
+                {item.props.title}
+              </h3>
+            </div>
+
+            {item.props.description && (
+              <div class="bg-white px-4 py-3 flex-1">
+                {item.props.description.split("\n\n").map((para) => (
+                  <p class="text-gray-700 text-sm leading-relaxed mt-1 first:mt-0">{para}</p>
+                ))}
+              </div>
+            )}
+
+          </article>
+        </a>
+      </li>
+    ))}
+    {showTeaser && (
+      <li class="flex">
+        <article class="flex flex-col flex-1 items-center justify-center p-8 text-center">
+          <p class="text-gray-700 text-sm mb-4">Wenn Sie mehr lesen möchten …</p>
+          <a
+            href={moreHref || "/fundstuecke"}
+            class="inline-block bg-brand text-white font-smallCaps tracking-wider px-6 py-2 hover:underline hover:underline-offset-4 hover:scale-105 hover:shadow-lg transition-all text-lg"
+          >
+            … hier geht's lang!
+          </a>
+        </article>
+      </li>
+    )}
+  </ul>
+</section>
+
+{showFilter && (
+  <script>
+    const COLLAPSED_HEIGHT = 82;
+
+    const container = document.getElementById("tag-container") as HTMLDivElement | null;
+    const fade = document.getElementById("tag-fade") as HTMLDivElement | null;
+    const toggle = document.getElementById("tag-toggle") as HTMLButtonElement | null;
+
+    if (container && fade && toggle) {
+      if (container.scrollHeight <= COLLAPSED_HEIGHT) {
+        toggle.style.display = "none";
+        fade.style.display = "none";
+      }
+
+      let isOpen = false;
+      toggle.addEventListener("click", () => {
+        if (!isOpen) {
+          container.style.maxHeight = container.scrollHeight + "px";
+          fade.style.opacity = "0";
+          toggle.textContent = "weniger …";
+        } else {
+          container.style.maxHeight = COLLAPSED_HEIGHT + "px";
+          fade.style.opacity = "1";
+          toggle.textContent = "mehr …";
+        }
+        isOpen = !isOpen;
+      });
+    }
+
+    const buttons = document.querySelectorAll<HTMLButtonElement>(".tag-filter");
+    const listItems = document.querySelectorAll<HTMLLIElement>("[data-tags]");
+
+    function setActive(btn: HTMLButtonElement) {
+      buttons.forEach((b) => {
+        const active = b === btn;
+        b.classList.toggle("bg-brand", active);
+        b.classList.toggle("text-white", active);
+        b.classList.toggle("text-brand", !active);
+        b.classList.toggle("hover:bg-brand", !active);
+        b.classList.toggle("hover:text-white", !active);
+      });
+    }
+
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const tag = btn.dataset.tag!;
+        setActive(btn);
+
+        if (tag === "__all__") {
+          listItems.forEach((li) => li.style.removeProperty("display"));
+        } else {
+          listItems.forEach((li) => {
+            const tags = li.dataset.tags?.split(",") ?? [];
+            li.style.display = tags.includes(tag) ? "" : "none";
+          });
+        }
+      });
+    });
+  </script>
+)}

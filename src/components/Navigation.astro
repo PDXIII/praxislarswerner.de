@@ -18,7 +18,7 @@ const navigation = await getConfigByID(CONTENTFUL_IDS.navigation) as { data: Nav
 >
   <ul class="hidden md:flex justify-end">
     {navigation.data
-      .filter((item) => item.visible.includes("big"))
+      .filter((item) => item.visible?.includes("big"))
       .map((item) => (
         <li key={item.name}>
           <a
@@ -33,7 +33,7 @@ const navigation = await getConfigByID(CONTENTFUL_IDS.navigation) as { data: Nav
 
   <ul class="md:hidden flex">
     {navigation.data
-      .filter((item) => item.visible.includes("small"))
+      .filter((item) => item.visible?.includes("small"))
       .map((item) => (
         <li class="grow" key={item.name}>
           <a

@@ -1,0 +1,32 @@
+---
+import Base from "../layouts/Base.astro";
+import FundstueckList from "../components/FundstueckList.astro";
+import RichTextContainer from "../components/RichTextContainer.astro";
+import { getBookmarks, getConfigByID, getPages } from "../lib/API";
+import { CONTENTFUL_IDS } from "../lib/constants";
+import { cached } from "../lib/cached";
+
+const [fundstuecke, settings, pages] = await Promise.all([
+  cached("bookmarks", getBookmarks),
+  cached("settings", () => getConfigByID(CONTENTFUL_IDS.settings)),
+  cached("pages", getPages),
+]);
+
+const domain = (settings?.data as Record<string, any>)?.domain ?? "";
+const fundstueckePage = pages.find((p) => p.params.slug === "fundstücke");
+---
+
+<Base
+  title="Fundstücke"
+  description="Empfehlungen und Entdeckungen aus der Praxis Lars Werner"
+  slug="fundstuecke"
+  domain={domain}
+>
+  <main>
+    <FundstueckList items={fundstuecke} showFilter>
+      {fundstueckePage?.props.text && (
+        <RichTextContainer slot="intro" class="px-4 text-center max-w-3xl mx-auto mb-10" style="margin-top: 0;" content={fundstueckePage.props.text} />
+      )}
+    </FundstueckList>
+  </main>
+</Base>

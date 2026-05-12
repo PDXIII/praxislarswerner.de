@@ -11,7 +11,9 @@ import type {
   Config,
   Wisdom,
   LandingPage,
+  Bookmark,
 } from "./types";
+import { fetchOgMeta } from "./fetchOgMeta";
 
 // -------------------------
 // Interfaces für Contentful
@@ -85,6 +87,7 @@ interface CFLandingPage {
     info: EntryFieldTypes.Text;
     introText: EntryFieldTypes.RichText;
     contactText: EntryFieldTypes.RichText;
+    fundstueckeText?: EntryFieldTypes.RichText;
     slideshowImages?: Array<{
       fields: { file: { url: EntryFieldTypes.Text } };
     }>;
@@ -271,6 +274,7 @@ export const getLandingPage = async (): Promise<LandingPage> => {
       info: entry.fields.info,
       introText: entry.fields.introText,
       contactText: entry.fields.contactText,
+      fundstueckeText: entry.fields.fundstueckeText,
       // ✅ Slideshow-Bilder in der korrekten Struktur für Slideshow.astro
       slideshowImages: entry.fields.slideshowImages?.map((img) => ({
         fields: {
@@ -282,6 +286,67 @@ export const getLandingPage = async (): Promise<LandingPage> => {
       })) ?? [],
     },
   };
+};
+
+// -------------------------
+// -------------------------
+// Bookmarks / Entdeckungen
+// -------------------------
+interface CFBookmark {
+  contentTypeId: "bookmark";
+  fields: {
+    title: EntryFieldTypes.Text;
+    url: EntryFieldTypes.Text;
+    description?: EntryFieldTypes.Text;
+    image?: {
+      fields: { file: { url: EntryFieldTypes.Text } };
+    };
+  };
+}
+
+export const getBookmarks = async (): Promise<Bookmark[]> => {
+  const [entries, tagsCollection] = await Promise.all([
+    contentfulClient.getEntries<CFBookmark>({ content_type: "bookmark", order: ["-sys.createdAt"] }),
+    contentfulClient.getTags(),
+  ]);
+
+  const tagNameMap = new Map(tagsCollection.items.map((t) => [t.sys.id, t.name]));
+
+  const results = await Promise.all(
+    entries.items.map(async (item) => {
+      const { title, url, description, image } = item.fields;
+      const tags = (item.metadata?.tags ?? []).map((t) => ({
+        id: t.sys.id,
+        name: tagNameMap.get(t.sys.id) ?? t.sys.id,
+      }));
+
+      let resolvedImageUrl = image
+        ? `https:${image.fields.file.url}`
+        : undefined;
+
+      const og = await fetchOgMeta(url);
+      if (!og) return null;
+
+      const resolvedDescription = [description, og.description]
+        .filter(Boolean)
+        .join("\n\n");
+
+      if (!resolvedImageUrl) resolvedImageUrl = og.imageUrl;
+
+      return {
+        contentTypeId: "bookmark" as const,
+        props: {
+          title,
+          url,
+          description: resolvedDescription,
+          imageUrl: resolvedImageUrl,
+          tags,
+        },
+      };
+    })
+  );
+
+  return results.filter((r): r is Bookmark => r !== null);
 };
 
 // -------------------------
