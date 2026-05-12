@@ -1,6 +1,7 @@
 ---
 import { getTeamMembers, getConfigByID, getOffers } from "../../lib/API";
 import { CONTENTFUL_IDS } from "../../lib/constants";
+import { richTextToPlain } from "../../lib/richTextToPlain";
 import type { TeamMember, Offer } from "../../lib/types";
 import Base from "../../layouts/Base.astro";
 import PageHeader from "../../components/PageHeader.astro";
@@ -28,24 +29,45 @@ const { slug } = Astro.params;
 
 const { name, title, bio, image, offer } = member.props;
 
-// Settings entpacken
-const brand = `${settings.data.prefix} ${settings.data.owner}`;
-const domain = settings.data.domain;
+const data = (settings?.data ?? {}) as Record<string, any>;
+const brand = `${data.prefix} ${data.owner}`;
+const domain = data.domain as string ?? "";
+
+const rawImage = image?.url ?? "";
+const ogImage = rawImage.startsWith("//") ? `https:${rawImage}` : rawImage;
+const description = richTextToPlain(bio).slice(0, 160) || title || name;
 
 // Nur gültige Angebote für das Team-Mitglied
 const validOffers: Offer[] = Array.isArray(offer)
   ? offers.filter((o) => offer.includes(o.props.name))
   : [];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name,
+  jobTitle: title,
+  description,
+  url: `${domain}/team/${slug}`,
+  image: ogImage || undefined,
+  knowsAbout: offer ?? [],
+  worksFor: {
+    "@type": "MedicalOrganization",
+    name: brand,
+    url: domain,
+  },
+};
 ---
 
 <Base
   title={name}
-  description={name}
-  slug={slug}
-  image={image?.url}
+  description={description}
+  slug={`team/${slug}`}
+  image={ogImage}
   brand={brand}
   domain={domain}
 >
+  <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   <main>
     <article>
       <PageHeader name={name} title={title} image={image} />

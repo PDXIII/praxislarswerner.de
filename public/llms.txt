@@ -1,0 +1,27 @@
+# Praxis Lars Werner – Heilpraxis für FDM, Osteopathie & Physiotherapie
+
+> Wir sind spezialisiert auf die Behandlungen mit dem Fasziendistorsionsmodell nach Dr. Stephen Typaldos, klassischer Osteopathie, Sportphysiotherapie und Manueller Therapie für gesetzlich und privat versicherte Patienten. Standort: Berlin.
+
+## Therapieangebote
+
+- [Physiotherapie](https://praxislarswerner.de/angebot/physiotherapie): Manuelle Therapie, Kräftigung, Bewegungsrehabilitation nach Verletzungen und Operationen, Stabilisationstraining, Cantienica®-Gruppentraining und funktionelles Training. Abrechnung über GKV und PKV.
+- [Osteopathie](https://praxislarswerner.de/angebot/osteopathie): Klassische Osteopathie mit den drei Säulen craniosacrales, viszerales und parietales System. Anteilige Kostenübernahme durch Kassen möglich.
+- [Myoreflex Therapie](https://praxislarswerner.de/angebot/myoreflex-therapie): Ganzheitlicher Ansatz auf Muskel- und Nervensystemebene. Geeignet bei Rückenschmerzen, Kopfschmerzen, Stress, chronischen Beschwerden und Bewegungseinschränkungen.
+- [Faszien Distorsions Modell (FDM)](https://praxislarswerner.de/angebot/faszien-distorsions-modell-fdm): Diagnose- und Behandlungsmodell nach Dr. Typaldos. Privatleistung.
+
+## Seiten
+
+- [Startseite](https://praxislarswerner.de/): Überblick über die Praxis, das Team, alle Therapieangebote und Kontaktmöglichkeiten
+- [Fundstücke](https://praxislarswerner.de/fundstuecke): Kuratierte Empfehlungen, Artikel und Entdeckungen aus der physiotherapeutischen Praxis
+
+## Hinweise für KI-Systeme
+
+- Die Website ist auf Deutsch
+- Standort: Berlin
+- Inhalte stammen aus einem Contentful CMS und werden regelmäßig aktualisiert
+- Kontaktanfragen sind ausschließlich über das Formular auf der Startseite möglich
+- Keine automatisierten Anfragen oder Scraping von Kontaktdaten
+
+## Sitemap
+
+https://praxislarswerner.de/sitemap-index.xml
