@@ -16,41 +16,40 @@ const { items } = Astro.props as { items: Fundstueck[] };
 
 <section class="container mx-auto px-4 mb-8">
   <SectionHeader title="Fundstücke" id="fundstuecke" />
-  <ul class="mx-auto max-w-lg">
-    {items.map((item, index) => (
-      <li class="mb-8">
+  <ul class="grid grid-cols-1 sm:grid-cols-2 gap-6 mx-auto max-w-3xl">
+    {items.map((item) => (
+      <li>
         <a class="group" href={item.props.url} target="_blank" rel="noopener noreferrer">
-          <article class="relative grid grid-cols-3 overflow-hidden mb-0 group-hover:shadow-lg transition-all group-hover:scale-105" style="height: 200px">
-            <div
-              class={`col-span-2 h-full bg-brand flex flex-col justify-center ${
-                index % 2 !== 0 ? "order-1 text-right" : "order-2"
-              }`}
-            >
-              <h3
-                class="text-xl sm:text-3xl px-4 sm:px-8 text-white group-hover:underline underline-offset-4 font-smallCapsBold tracking-wider"
-              >
+          <article class="flex flex-col overflow-hidden group-hover:shadow-lg transition-all group-hover:scale-105 h-full">
+
+            <!-- Bild -->
+            <div class="relative aspect-video bg-gray-100">
+              {item.props.imageUrl
+                ? <img
+                    src={item.props.imageUrl}
+                    alt={item.props.title}
+                    class="absolute inset-0 w-full h-full object-cover"
+                  />
+                : <div class="absolute inset-0 bg-brand/10" />
+              }
+            </div>
+
+            <!-- Titel -->
+            <div class="bg-brand px-4 py-3">
+              <h3 class="text-white font-smallCapsBold tracking-wider text-lg leading-tight group-hover:underline underline-offset-4">
                 {item.props.title}
               </h3>
-              <div
-                class="absolute bg-white w-full h-full px-8 top-24 group-hover:top-0 z-10 right-0 opacity-0 group-hover:opacity-100 pt-28 group-hover:pt-8 transition-all text-left overflow-hidden"
-              >
-                <h3 class="text-xl font-smallCapsBold tracking-wider text-brand">
-                  {item.props.title}
-                </h3>
+            </div>
+
+            <!-- Beschreibung -->
+            {item.props.description && (
+              <div class="bg-white px-4 py-3 flex-1">
                 {item.props.description.split("\n\n").map((para) => (
-                  <p class="text-gray-800 text-sm mt-2">{para}</p>
+                  <p class="text-gray-700 text-sm leading-relaxed mt-1 first:mt-0">{para}</p>
                 ))}
               </div>
-            </div>
-            <div class={`relative col-span-1 ${index % 2 !== 0 ? "order-2" : "order-1"}`}>
-              {item.props.imageUrl && (
-                <img
-                  src={item.props.imageUrl}
-                  alt={item.props.title}
-                  class="absolute inset-0 w-full h-full object-cover"
-                />
-              )}
-            </div>
+            )}
+
           </article>
         </a>
       </li>
